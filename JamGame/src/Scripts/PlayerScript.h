@@ -12,14 +12,14 @@ namespace HBL
 
 		IEntity player;
 		IEntity enemy;
-		IEntity background;
+		//IEntity background;
 		IEntity camera;
 
 		virtual void OnCreate() override 
 		{
 			player = (Registry::Get().FindEntityWithTag("Player"));
 			enemy = (Registry::Get().FindEntityWithTag("Enemy"));
-			background = (Registry::Get().FindEntityWithTag("Background"));
+			//background = (Registry::Get().FindEntityWithTag("Background"));
 			camera = (Registry::Get().FindEntityWithTag("Camera"));
 
 			Component::SpriteRenderer& sprite = Registry::Get().GetComponent<Component::SpriteRenderer>(player);
@@ -60,13 +60,13 @@ namespace HBL
 		virtual void OnUpdate(float dt) override 
 		{
 			Component::Transform& transform_p = Registry::Get().GetComponent<Component::Transform>(player);
-			Component::Transform& transform_bg = Registry::Get().GetComponent<Component::Transform>(background);
+			//Component::Transform& transform_bg = Registry::Get().GetComponent<Component::Transform>(background);
 			Component::Transform& transform_cam = Registry::Get().GetComponent<Component::Transform>(camera);
 			Component::Animation& animation_p = Registry::Get().GetComponent<Component::Animation>(player);
 
 			// Background follow player
-			transform_bg.position.x = transform_p.position.x;
-			transform_bg.position.y = transform_p.position.y;
+			//transform_bg.position.x = transform_p.position.x;
+			//transform_bg.position.y = transform_p.position.y;
 
 			// Camera follow player
 			transform_cam.position.x = transform_p.position.x + (-Systems::Window.GetWidth() / 2.0f);

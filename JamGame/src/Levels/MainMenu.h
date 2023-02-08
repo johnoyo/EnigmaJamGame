@@ -5,7 +5,6 @@
 
 #include "..\Scripts\PlayerScript.h"
 #include "..\Scripts\EnemyScript.h"
-#include "..\Scripts\LevelHandlerScript.h"
 
 namespace HBL 
 {

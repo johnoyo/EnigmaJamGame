@@ -15,19 +15,21 @@ HBL::HealthSystem healthSystem;
 
 int main() 
 {
-	HBL::MainMenu mainMenu;
-	HBL::Level1 level1;
+	HBL::MainMenu* mainMenu = new HBL::MainMenu;
+	HBL::Level1* level1 = new HBL::Level1;
 
 	HBL::Application *app = new HBL::Application(1280.0f, 720.0f, "JamGame", false, false, false, 30.0f);
 
 	HBL::Registry::Get().RegisterSystem(&healthSystem);
 	HBL::Registry::Get().AddArray<HBL::Component::Health>();
 
-	app->AddScene(&mainMenu);
-	app->AddScene(&level1);
+	app->AddScene(mainMenu);
+	app->AddScene(level1);
 
 	app->Start();
 
+	delete mainMenu;
+	delete level1;
 	delete app;
 
 	return 0;
