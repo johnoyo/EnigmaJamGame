@@ -26,7 +26,6 @@ void HBL::Level1::OnAttach()
 	Registry::Get().AddComponent<Component::Script>(enemy);
 	Registry::Get().AddComponent<Component::SpriteRenderer>(enemy);
 	Registry::Get().AddComponent<Component::CollisionBox>(enemy);
-	Registry::Get().AddComponent<Component::Gravity>(enemy);
 	Registry::Get().AddComponent<Component::Shadow>(enemy);
 
 	Registry::Get().AddComponent<Component::Camera>(camera);
@@ -56,8 +55,6 @@ void HBL::Level1::OnAttach()
 	Registry::Get().GetComponent<Component::Transform>(background).Static = false;
 
 	Registry::Get().GetComponent<Component::Shadow>(enemy).source = &player;
-	Registry::Get().GetComponent<Component::Gravity>(enemy).force = 3000.0f;
-	Registry::Get().GetComponent<Component::Gravity>(enemy).threshold = -3000.0f;
 
 	Registry::Get().GetComponent<Component::Camera>(camera).projection = glm::ortho(
 		0.0f, Systems::Window.GetWidth(),
@@ -82,11 +79,12 @@ void HBL::Level1::OnAttach()
 		Registry::Get().GetComponent<Component::CollisionBox>(level[i]).Enabled = false;
 		Registry::Get().GetComponent<Component::SpriteRenderer>(level[i]).Enabled = false;
 	}
+
+	ILoadLevel("res/levels/test2.txt");
 }
 
 void HBL::Level1::OnCreate()
 {
-	ILoadLevel("res/levels/test2.txt");
 }
 
 void HBL::Level1::OnDetach()
@@ -251,7 +249,6 @@ void HBL::Level1::ILoadLevel(const std::string& level_path)
 			enemyMaterial.texture = "res/textures/enemy.png";
 
 			Registry::Get().GetComponent<Component::Shadow>(enemy).Enabled = true;
-			Registry::Get().GetComponent<Component::Gravity>(enemy).Enabled = true;
 			enemy_index++;
 		}
 	}

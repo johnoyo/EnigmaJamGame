@@ -10,20 +10,20 @@
 // User declared systems
 HBL::HealthSystem healthSystem;
 
-#include "Levels\Level0.h"
+#include "Levels\MainMenu.h"
 #include "Levels\Level1.h"
 
 int main() 
 {
-	HBL::Level0 level0;
+	HBL::MainMenu mainMenu;
 	HBL::Level1 level1;
 
-	HBL::Application *app = new HBL::Application(1920.0f, 1080.0f, "SampleApp", false, false, false, 30.0f);
+	HBL::Application *app = new HBL::Application(1280.0f, 720.0f, "JamGame", false, false, false, 30.0f);
 
 	HBL::Registry::Get().RegisterSystem(&healthSystem);
 	HBL::Registry::Get().AddArray<HBL::Component::Health>();
 
-	app->AddScene(&level0);
+	app->AddScene(&mainMenu);
 	app->AddScene(&level1);
 
 	app->Start();

@@ -1,5 +1,5 @@
 -- main solution file.
-workspace "HumbleGameEngine"
+workspace "EnigmaJamGame"
     architecture "x64"
 
     configurations 
@@ -70,9 +70,9 @@ project "Humble"
 
         postbuildcommands
         {
-            ("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/SampleApp"),
-            ("{COPY} ../Dependencies/GLEW/bin/Release/x64/glew32.dll ../bin/" .. outputdir .. "/SampleApp"),
-            ("{COPY} ../Dependencies/Fmod/lib/x64/fmod.dll ../bin/" .. outputdir .. "/SampleApp")
+            ("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/JamGame"),
+            ("{COPY} ../Dependencies/GLEW/bin/Release/x64/glew32.dll ../bin/" .. outputdir .. "/JamGame"),
+            ("{COPY} ../Dependencies/Fmod/lib/x64/fmod.dll ../bin/" .. outputdir .. "/JamGame")
         }
 
     filter "configurations:Debug"
@@ -92,8 +92,8 @@ project "Humble"
         linkoptions { "/SUBSYSTEM:WINDOWS" }
 
 -- Application project
-project "SampleApp"
-    location "SampleApp"
+project "JamGame"
+    location "JamGame"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++17"
