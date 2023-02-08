@@ -97,6 +97,7 @@ namespace HBL
 
 			if (InputManager::GetKeyDown(GLFW_KEY_W))
 			{
+				transform_p.position.y += 210.0f * dt;
 				Systems::Animation.PlayAnimation(animation_p, 1);
 			}
 			else
