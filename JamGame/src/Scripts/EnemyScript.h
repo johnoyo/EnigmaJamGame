@@ -2,29 +2,42 @@
 
 #include "Humble.h"
 
-namespace HBL 
+using namespace HBL;
+
+class EnemyScript final : public IScript
 {
-	class EnemyScript final : public IScript
+public:
+	EnemyScript() {}
+	~EnemyScript() {}
+
+	IEntity player;
+	IEntity enemy;
+
+	float XPos = 0.f;
+	float YPos = 0.f;
+
+	virtual void OnCreate() override 
 	{
-	public:
-		EnemyScript() {}
-		~EnemyScript() {}
+		player = (Registry::Get().FindEntityWithTag("Player"));
+		enemy = (Registry::Get().FindEntityWithTag("Enemy"));
 
-		IEntity player;
-		IEntity enemy;
+		Registry::Get().GetComponent<Component::SpriteRenderer>(enemy).texture = "res/textures/enemy.png";
+	}
 
-		virtual void OnCreate() override 
+	virtual void OnUpdate(float dt) override 
+	{
+		/*Component::Transform& eTr = Registry::Get().GetComponent<Component::Transform>(enemy);
+		Component::Transform& pTr = Registry::Get().GetComponent<Component::Transform>(player);
+
+		float xDistance = pTr.position.x - eTr.position.x;
+		float yDistance = pTr.position.y - eTr.position.y;
+
+		float hypotenuse = sqrt((xDistance * xDistance) + (yDistance * yDistance));
+
+		if (hypotenuse < 400 && hypotenuse > 20)
 		{
-			player = (Registry::Get().FindEntityWithTag("Player"));
-			enemy = (Registry::Get().FindEntityWithTag("Enemy"));
-
-			Registry::Get().GetComponent<Component::SpriteRenderer>(enemy).texture = "res/textures/player_r.png";
-		}
-
-		virtual void OnUpdate(float dt) override 
-		{
-			Registry::Get().GetComponent<Component::Transform>(enemy).position.x -= 30.0f * dt;
-		}
-
-	};
-}
+			eTr.position.x += dt * 100 * (xDistance / hypotenuse);
+			eTr.position.y += dt * 100 * (yDistance / hypotenuse);
+		}*/
+	}
+};

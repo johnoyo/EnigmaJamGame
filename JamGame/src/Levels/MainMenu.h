@@ -3,21 +3,17 @@
 #include "Humble.h"
 #include "..\MyComponents.h"
 
-#include "..\Scripts\PlayerScript.h"
-#include "..\Scripts\EnemyScript.h"
+using namespace HBL;
 
-namespace HBL 
+class MainMenu final : public IScene
 {
-	class MainMenu final : public IScene
-	{
-	public:
-		virtual void OnAttach() override;
-		virtual void OnCreate() override;
-		virtual void OnDetach() override;
+public:
+	virtual void OnAttach() override;
+	virtual void OnCreate() override;
+	virtual void OnDetach() override;
 
-	private:
-		HBL::IEntity m_Camera;
-		HBL::IEntity m_PlayButton;
-	};
-}
+private:
+	IEntity m_Camera;
+	IEntity m_PlayButton;
+};
 

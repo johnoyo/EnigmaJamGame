@@ -1,6 +1,6 @@
 #include "MainMenu.h"
 
-void HBL::MainMenu::OnAttach()
+void MainMenu::OnAttach()
 {
 	// Camera entity set up.
 	Registry::Get().EnrollEntity(m_Camera, "Camera");
@@ -27,11 +27,11 @@ void HBL::MainMenu::OnAttach()
 	Registry::Get().GetComponent<Component::Clickable>(m_PlayButton).OnClick = [&]() { SceneManager::Get().TriggerSceneChange(); };
 }
 
-void HBL::MainMenu::OnCreate()
+void MainMenu::OnCreate()
 {
 }
 
-void HBL::MainMenu::OnDetach()
+void MainMenu::OnDetach()
 {
 }
 

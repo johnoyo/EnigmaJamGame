@@ -5,23 +5,32 @@
 #include "MyComponents.h"
 
 // User defined systems
-#include "Systems\HealthSystem.h"
+#include "Systems\PlayerDirectionSystem.h"
+#include "Systems\GhostBehaviourSystem.h"
+#include "Systems\GhostStunnerSystem.h"
 
 // User declared systems
-HBL::HealthSystem healthSystem;
+PlayerDirectionSystem playerDirectionSystem;
+GhostBehaviourSystem ghostBehaviourSystem;
+GhostStunnerSystem ghostStunnerSystem;
 
 #include "Levels\MainMenu.h"
 #include "Levels\Level1.h"
 
 int main() 
 {
-	HBL::MainMenu* mainMenu = new HBL::MainMenu;
-	HBL::Level1* level1 = new HBL::Level1;
+	MainMenu* mainMenu = new MainMenu;
+	Level1* level1 = new Level1;
 
-	HBL::Application *app = new HBL::Application(1280.0f, 720.0f, "JamGame", false, false, false, 30.0f);
+	HBL::Application *app = new HBL::Application(1920.0f, 1080.0f, "JamGame", false, false, false, 30.0f);
 
-	HBL::Registry::Get().RegisterSystem(&healthSystem);
-	HBL::Registry::Get().AddArray<HBL::Component::Health>();
+	HBL::Registry::Get().RegisterSystem(&playerDirectionSystem);
+	HBL::Registry::Get().RegisterSystem(&ghostBehaviourSystem);
+	HBL::Registry::Get().RegisterSystem(&ghostStunnerSystem);
+
+	HBL::Registry::Get().AddArray<MyComponent::PlayerDirection>();
+	HBL::Registry::Get().AddArray<MyComponent::GhostBehaviour>();
+	HBL::Registry::Get().AddArray<MyComponent::GhostStunner>();
 
 	app->AddScene(mainMenu);
 	app->AddScene(level1);

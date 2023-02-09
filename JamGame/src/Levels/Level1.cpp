@@ -1,6 +1,8 @@
 #include "Level1.h"
 
-void HBL::Level1::OnAttach()
+using namespace HBL;
+
+void Level1::OnAttach()
 {
 	// Enroll entities.
 	for (uint32_t i = 0; i < 1000; i++)
@@ -11,8 +13,9 @@ void HBL::Level1::OnAttach()
 
 	Registry::Get().EnrollEntity(player, "Player");
 	Registry::Get().EnrollEntity(enemy, "Enemy");
+	Registry::Get().EnrollEntity(tranquilizer, "Tranquilizer");
+	Registry::Get().EnrollEntity(tranquilizerWave, "TranquilizerWave");
 	Registry::Get().EnrollEntity(camera, "Camera");
-
 
 	// Add components.
 	for (uint32_t i = 0; i < 1000; i++)
@@ -31,22 +34,37 @@ void HBL::Level1::OnAttach()
 	Registry::Get().AddComponent<Component::SpriteRenderer>(player);
 	Registry::Get().AddComponent<Component::CollisionBox>(player);
 	Registry::Get().AddComponent<Component::Animation>(player);
+	Registry::Get().AddComponent<MyComponent::PlayerDirection>(player);
 
 	Registry::Get().AddComponent<Component::Script>(enemy);
 	Registry::Get().AddComponent<Component::SpriteRenderer>(enemy);
 	Registry::Get().AddComponent<Component::CollisionBox>(enemy);
-	Registry::Get().AddComponent<Component::Shadow>(enemy);
+	Registry::Get().AddComponent<MyComponent::GhostBehaviour>(enemy);
+	Registry::Get().AddComponent<MyComponent::GhostStunner>(enemy);
 
 	Registry::Get().AddComponent<Component::Camera>(camera);
 
+	Registry::Get().AddComponent<Component::SpriteRenderer>(tranquilizer);
+	Registry::Get().AddComponent<Component::CollisionBox>(tranquilizer);
+
+	Registry::Get().AddComponent<Component::SpriteRenderer>(tranquilizerWave);
+	Registry::Get().AddComponent<Component::CollisionBox>(tranquilizerWave);
+	Registry::Get().AddComponent<Component::Script>(tranquilizerWave);
+
 	// Initialize components.
+	Registry::Get().GetComponent<Component::Script>(tranquilizerWave).script.push_back(new TranquilizerWaveScript());
 	Registry::Get().GetComponent<Component::Script>(player).script.push_back(new PlayerScript());
 	Registry::Get().GetComponent<Component::Script>(enemy).script.push_back(new EnemyScript());
 
 	Registry::Get().GetComponent<Component::Transform>(player).Static = false;
 	Registry::Get().GetComponent<Component::Transform>(enemy).Static = false;
+	Registry::Get().GetComponent<Component::CollisionBox>(enemy).Trigger = true;
 
-	Registry::Get().GetComponent<Component::Shadow>(enemy).source = &player;
+	Registry::Get().GetComponent<Component::Transform>(tranquilizer).Static = false;
+	Registry::Get().GetComponent<Component::CollisionBox>(tranquilizer).Trigger = true;
+
+	Registry::Get().GetComponent<Component::Transform>(tranquilizerWave).Static = false;
+	Registry::Get().GetComponent<Component::CollisionBox>(tranquilizerWave).Trigger = true;
 
 	Registry::Get().GetComponent<Component::Camera>(camera).projection = glm::ortho(
 		0.0f, Systems::Window.GetWidth(),
@@ -73,15 +91,15 @@ void HBL::Level1::OnAttach()
 	CSVImporter("res/levels/testMap.csv");
 }
 
-void HBL::Level1::OnCreate()
+void Level1::OnCreate()
 {
 }
 
-void HBL::Level1::OnDetach()
+void Level1::OnDetach()
 {
 }
 
-void HBL::Level1::CSVImporter(const std::string& levelPath)
+void Level1::CSVImporter(const std::string& levelPath)
 {
 	std::fstream fin;
 	fin.open(levelPath, std::ios::in);
@@ -176,14 +194,19 @@ void HBL::Level1::CSVImporter(const std::string& levelPath)
 	enemyTransform.Static = false;
 	enemyTransform.Enabled = true;
 
-	enemyCollisionBox.Enabled = true;
-
 	Registry::Get().GetComponent<Component::Script>(enemy).Enabled = true;
 
 	enemyMaterial.Enabled = true;
 	enemyMaterial.texture = "res/textures/enemy.png";
 
-	Registry::Get().GetComponent<Component::Shadow>(enemy).Enabled = true;
+	// Tranquilizer
+	Component::Transform& tranquilizerTransform = Registry::Get().GetComponent<Component::Transform>(tranquilizer);
+	Component::SpriteRenderer& tranquilizerMaterial = Registry::Get().GetComponent<Component::SpriteRenderer>(tranquilizer);
+
+	tranquilizerTransform.scale.x = 30.0f;
+	tranquilizerTransform.scale.y = 30.0f;
+	tranquilizerTransform.position.x = 35.f * tranquilizerTransform.scale.x;
+	tranquilizerTransform.position.y = 5.f * tranquilizerTransform.scale.y;
 
 	// Update the position of the player last
 	Component::Transform& playerTransform = Registry::Get().GetComponent<Component::Transform>(player);
@@ -191,8 +214,8 @@ void HBL::Level1::CSVImporter(const std::string& levelPath)
 
 	playerTransform.scale.x = 29.0f;
 	playerTransform.scale.y = 29.0f;
-	playerTransform.position.x = 3.f * playerTransform.scale.x;
-	playerTransform.position.y = 3.f * playerTransform.scale.y;
+	playerTransform.position.x = 29.f * playerTransform.scale.x;
+	playerTransform.position.y = 2.f * playerTransform.scale.y;
 	playerTransform.Static = false;
 	playerTransform.Enabled = true;
 
@@ -200,7 +223,7 @@ void HBL::Level1::CSVImporter(const std::string& levelPath)
 	Registry::Get().GetComponent<Component::Script>(player).Enabled = true;
 
 	playerMaterial.Enabled = true;
-	playerMaterial.texture = "res/textures/super_mario_tiles.png";
+	playerMaterial.texture = "res/textures/hero-1.png";
 
 	Registry::Get().GetComponent<Component::Animation>(player).Enabled = true;
 }
