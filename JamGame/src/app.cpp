@@ -8,11 +8,13 @@
 #include "Systems\PlayerDirectionSystem.h"
 #include "Systems\GhostBehaviourSystem.h"
 #include "Systems\GhostStunnerSystem.h"
+#include "Systems\CollectibleSystem.h"
 
 // User declared systems
 PlayerDirectionSystem playerDirectionSystem;
 GhostBehaviourSystem ghostBehaviourSystem;
 GhostStunnerSystem ghostStunnerSystem;
+CollectibleSystem collectibleSystem;
 
 #include "Levels\MainMenu.h"
 #include "Levels\Level1.h"
@@ -27,10 +29,12 @@ int main()
 	HBL::Registry::Get().RegisterSystem(&playerDirectionSystem);
 	HBL::Registry::Get().RegisterSystem(&ghostBehaviourSystem);
 	HBL::Registry::Get().RegisterSystem(&ghostStunnerSystem);
+	HBL::Registry::Get().RegisterSystem(&collectibleSystem);
 
 	HBL::Registry::Get().AddArray<MyComponent::PlayerDirection>();
 	HBL::Registry::Get().AddArray<MyComponent::GhostBehaviour>();
 	HBL::Registry::Get().AddArray<MyComponent::GhostStunner>();
+	HBL::Registry::Get().AddArray<MyComponent::Collectible>();
 
 	app->AddScene(mainMenu);
 	app->AddScene(level1);

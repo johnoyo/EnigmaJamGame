@@ -9,11 +9,15 @@ public:
 	{
 		FUNCTION_PROFILE();
 
+		IEntity& target = Registry::Get().FindEntityWithTag("Player");
+
 		Registry::Get().View<MyComponent::GhostBehaviour>().ForEach([&](MyComponent::GhostBehaviour& ghostBehaviour)
 		{
-			IEntity& target = Registry::Get().FindEntityWithTag("Player");
-			if (target != Registry::InvalidEntity)
-				ghostBehaviour.target = &target;
+			if (ghostBehaviour.Enabled)
+			{
+				if (target != Registry::InvalidEntity)
+					ghostBehaviour.target = &target;
+			}
 		}).Run();
 	}
 
@@ -29,7 +33,15 @@ public:
 			{
 				if (ghostBehaviour.target != nullptr)
 				{
-					if (!ghostStaller.stunned)
+					// Enable agro state and disable retreat.
+					if (Systems::Collision.CollisionBetween(*ghostBehaviour.target, *ghostBehaviour.territory))
+					{
+						ghostBehaviour.agro = true;
+						ghostBehaviour.retreat = false;
+					}
+
+					// Move towards the player(Agro).
+					if (!ghostStaller.stunned && ghostBehaviour.agro && !ghostBehaviour.retreat)
 					{
 						Component::Transform& targetTransform = Registry::Get().GetComponent<Component::Transform>(*(ghostBehaviour.target));
 
@@ -40,16 +52,44 @@ public:
 
 						if (hypotenuse < ghostBehaviour.range)
 						{
+							// Follow player
 							ghostTransform.position.x += dt * ghostBehaviour.speed * (xDistance / hypotenuse);
 							ghostTransform.position.y += dt * ghostBehaviour.speed * (yDistance / hypotenuse);
-						}
-
-						if (Systems::Collision.CollisionBetween(entt, *ghostBehaviour.target))
+						}	
+						else
 						{
-							// Play sound.
-							// Lose health.
-							ENGINE_LOG("CollisionBetween ghost and player.");
+							// Player out of range. Trigger retreat.
+							ghostBehaviour.agro = false;
+							ghostBehaviour.retreat = true;
 						}
+					}
+					// Move back to base position(retreat).
+					else if (ghostBehaviour.retreat)
+					{
+						float xDistance = ghostBehaviour.basePosition.x - ghostTransform.position.x;
+						float yDistance = ghostBehaviour.basePosition.y - ghostTransform.position.y;
+
+						float hypotenuse = sqrt((xDistance * xDistance) + (yDistance * yDistance));
+
+						// Go towards base location.
+						ghostTransform.position.x += dt * ghostBehaviour.speed * (xDistance / hypotenuse);
+						ghostTransform.position.y += dt * ghostBehaviour.speed * (yDistance / hypotenuse);
+
+						// Reset retreat after arriving.
+						if (glm::distance(ghostTransform.position, ghostBehaviour.basePosition) < 5.f)
+						{
+							ghostBehaviour.retreat = false;
+						}
+					}
+
+					if (Systems::Collision.CollisionBetween(entt, *ghostBehaviour.target))
+					{
+						ENGINE_LOG("CollisionBetween ghost and player.");
+
+						// Play sound.
+
+						// Lose health.
+
 					}
 				}
 			}

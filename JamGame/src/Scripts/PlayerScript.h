@@ -11,14 +11,12 @@ public:
 	~PlayerScript() {}
 
 	IEntity player;
-	IEntity enemy;
 	IEntity tranquilizer;
 	IEntity camera;
 
 	virtual void OnCreate() override 
 	{
 		player = (Registry::Get().FindEntityWithTag("Player"));
-		enemy = (Registry::Get().FindEntityWithTag("Enemy"));
 		tranquilizer = (Registry::Get().FindEntityWithTag("Tranquilizer"));
 		camera = (Registry::Get().FindEntityWithTag("Camera"));
 
