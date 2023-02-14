@@ -23,7 +23,6 @@ void Level1::OnAttach()
 	Registry::Get().EnrollEntity(player, "Player");
 	Registry::Get().EnrollEntity(tranquilizer, "Tranquilizer");
 	Registry::Get().EnrollEntity(tranquilizerWave, "TranquilizerWave");
-	Registry::Get().EnrollEntity(tranquilizerUI, "TranquilizerUI");
 	Registry::Get().EnrollEntity(camera, "Camera");
 
 	// Add components.
@@ -64,7 +63,6 @@ void Level1::OnAttach()
 	Registry::Get().AddComponent<Component::SpriteRenderer>(player);
 	Registry::Get().AddComponent<Component::CollisionBox>(player);
 	Registry::Get().AddComponent<Component::Animation>(player);
-	Registry::Get().AddComponent<MyComponent::PlayerDirection>(player);
 
 	Registry::Get().AddComponent<Component::Camera>(camera);
 
@@ -73,12 +71,10 @@ void Level1::OnAttach()
 
 	Registry::Get().AddComponent<Component::SpriteRenderer>(tranquilizerWave);
 	Registry::Get().AddComponent<Component::CollisionBox>(tranquilizerWave);
-	Registry::Get().AddComponent<Component::Script>(tranquilizerWave);
-
-	Registry::Get().AddComponent<Component::Text>(tranquilizerUI);
+	Registry::Get().AddComponent<Component::Text>(tranquilizerWave);
+	Registry::Get().AddComponent<MyComponent::Tranquilizer>(tranquilizerWave);
 
 	// Initialize components.
-	Registry::Get().GetComponent<Component::Script>(tranquilizerWave).script.push_back(new TranquilizerWaveScript());
 	Registry::Get().GetComponent<Component::Script>(player).script.push_back(new PlayerScript());
 
 	Registry::Get().GetComponent<Component::Transform>(player).Static = false;
@@ -89,10 +85,10 @@ void Level1::OnAttach()
 	Registry::Get().GetComponent<Component::Transform>(tranquilizerWave).Static = false;
 	Registry::Get().GetComponent<Component::CollisionBox>(tranquilizerWave).Trigger = true;
 
-	Registry::Get().GetComponent<Component::Text>(tranquilizerUI).text = "100";
-	Registry::Get().GetComponent<Component::Text>(tranquilizerUI).color = { 1.0f, 0.8f, 0.5f, 1.0f};
-	Registry::Get().GetComponent<Component::Text>(tranquilizerUI).screenSpace = true;
-	Registry::Get().GetComponent<Component::Text>(tranquilizerUI).sreenSpaceOffset = { Systems::Window.GetWidth() - 125.f, Systems::Window.GetHeight() - 50.f };
+	Registry::Get().GetComponent<Component::Text>(tranquilizerWave).text = "100";
+	Registry::Get().GetComponent<Component::Text>(tranquilizerWave).color = { 1.0f, 0.8f, 0.5f, 1.0f};
+	Registry::Get().GetComponent<Component::Text>(tranquilizerWave).screenSpace = true;
+	Registry::Get().GetComponent<Component::Text>(tranquilizerWave).sreenSpaceOffset = { Systems::Window.GetWidth() - 125.f, Systems::Window.GetHeight() - 50.f };
 
 	Registry::Get().GetComponent<Component::Camera>(camera).projection = glm::ortho(
 		0.0f, Systems::Window.GetWidth(),
@@ -196,7 +192,7 @@ void Level1::InitializeLevel(const std::string& levelPath1, const std::string& l
 
 	HandleEntities();
 
-	// Tranquilizer
+	// Tranquilizer.
 	Component::Transform& tranquilizerTransform = Registry::Get().GetComponent<Component::Transform>(tranquilizer);
 	Component::SpriteRenderer& tranquilizerMaterial = Registry::Get().GetComponent<Component::SpriteRenderer>(tranquilizer);
 
@@ -205,7 +201,18 @@ void Level1::InitializeLevel(const std::string& levelPath1, const std::string& l
 	tranquilizerTransform.position.x = 55.f * tranquilizerTransform.scale.x;
 	tranquilizerTransform.position.y = 5.f * tranquilizerTransform.scale.y;
 
-	// Update the position of the player last
+	// Tranquilizer wave.
+	Component::Transform& pTr = Registry::Get().GetComponent<Component::Transform>(player);
+	Component::Transform& trTr = Registry::Get().GetComponent<Component::Transform>(tranquilizerWave);
+
+	trTr.position.x = pTr.position.x + 50.f;
+	trTr.position.y = pTr.position.y;
+	trTr.scale = { 90.f, 30.f, 0.f };
+
+	Registry::Get().GetComponent<Component::CollisionBox>(tranquilizerWave).Enabled = false;
+	Registry::Get().GetComponent<Component::SpriteRenderer>(tranquilizerWave).Enabled = false;
+
+	// Player.
 	Component::Transform& playerTransform = Registry::Get().GetComponent<Component::Transform>(player);
 	Component::SpriteRenderer& playerMaterial = Registry::Get().GetComponent<Component::SpriteRenderer>(player);
 
@@ -274,7 +281,7 @@ void Level1::HandleEntityTiles()
 				float x = glm::floor((100 - m_LevelTiles[i][j]) % 10);
 				float y = glm::floor((100 - m_LevelTiles[i][j]) / 10);
 				Registry::Get().GetComponent<Component::SpriteRenderer>(floor[floorIndex]).coords = { 0.f, 0.f };
-				//Registry::Get().GetComponent<Component::Shadow>(wall[wallIndex]).Enabled = true;
+				Registry::Get().GetComponent<Component::Shadow>(wall[wallIndex]).Enabled = true;
 
 				wallIndex++;
 			}
@@ -378,7 +385,7 @@ void Level1::HandleEntities()
 
 					territoryTransform.Enabled = true;
 					territoryCollisionBox.Enabled = true;
-					territoryMaterial.Enabled = true;
+					//territoryMaterial.Enabled = true;
 					territoryCollisionBox.Trigger = true;
 				}
 				else if (territoryIndex == 1)
@@ -387,7 +394,7 @@ void Level1::HandleEntities()
 
 					territoryTransform.Enabled = true;
 					territoryCollisionBox.Enabled = true;
-					territoryMaterial.Enabled = true;
+					//territoryMaterial.Enabled = true;
 					territoryCollisionBox.Trigger = true;
 				}
 				else if (territoryIndex == 2)
@@ -396,7 +403,7 @@ void Level1::HandleEntities()
 
 					territoryTransform.Enabled = true;
 					territoryCollisionBox.Enabled = true;
-					territoryMaterial.Enabled = true;
+					//territoryMaterial.Enabled = true;
 					territoryCollisionBox.Trigger = true;
 				}
 				else if (territoryIndex == 3)

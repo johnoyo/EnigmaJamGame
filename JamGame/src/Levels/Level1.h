@@ -5,7 +5,6 @@
 
 #include "..\Scripts\PlayerScript.h"
 #include "..\Scripts\EnemyScript.h"
-#include "..\Scripts\TranquilizerWaveScript.h"
 
 class Level1 final : public HBL::IScene
 {
@@ -22,7 +21,6 @@ public:
 private:
 	HBL::IEntity tranquilizer;
 	HBL::IEntity tranquilizerWave;
-	HBL::IEntity tranquilizerUI;
 	HBL::IEntity player;
 	HBL::IEntity camera;
 

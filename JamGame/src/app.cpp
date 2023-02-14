@@ -5,13 +5,13 @@
 #include "MyComponents.h"
 
 // User defined systems
-#include "Systems\PlayerDirectionSystem.h"
+#include "Systems\TranquilizerSystem.h"
 #include "Systems\GhostBehaviourSystem.h"
 #include "Systems\GhostStunnerSystem.h"
 #include "Systems\CollectibleSystem.h"
 
 // User declared systems
-PlayerDirectionSystem playerDirectionSystem;
+TranquilizerSystem tranquilizerSystem;
 GhostBehaviourSystem ghostBehaviourSystem;
 GhostStunnerSystem ghostStunnerSystem;
 CollectibleSystem collectibleSystem;
@@ -26,12 +26,12 @@ int main()
 
 	HBL::Application *app = new HBL::Application(1920.0f, 1080.0f, "JamGame", false, false, false, 30.0f);
 
-	HBL::Registry::Get().RegisterSystem(&playerDirectionSystem);
+	HBL::Registry::Get().RegisterSystem(&tranquilizerSystem);
 	HBL::Registry::Get().RegisterSystem(&ghostBehaviourSystem);
 	HBL::Registry::Get().RegisterSystem(&ghostStunnerSystem);
 	HBL::Registry::Get().RegisterSystem(&collectibleSystem);
 
-	HBL::Registry::Get().AddArray<MyComponent::PlayerDirection>();
+	HBL::Registry::Get().AddArray<MyComponent::Tranquilizer>();
 	HBL::Registry::Get().AddArray<MyComponent::GhostBehaviour>();
 	HBL::Registry::Get().AddArray<MyComponent::GhostStunner>();
 	HBL::Registry::Get().AddArray<MyComponent::Collectible>();

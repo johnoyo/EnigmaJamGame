@@ -2,12 +2,18 @@
 
 namespace MyComponent 
 {
-	struct PlayerDirection 
+	struct Tranquilizer
 	{
+		float remaining = 100.f;
+		float chargeSpeed = 7.5f;
+		float overheatChargeSpeed = 3.5f;
+		float dischargeSpeed = 100.f;
+		bool overheat = false;
 		bool Right = false;
 		bool Left = false;
 		bool Up = false;
 		bool Down = true;
+		HBL::IEntity* owner = nullptr;
 		bool Enabled = true;
 	};
 
@@ -34,7 +40,7 @@ namespace MyComponent
 
 	struct Collectible
 	{
-		uint32_t points = 10;
+		uint32_t points = 10U;
 		HBL::IEntity* target = nullptr;
 		bool Enabled = true;
 	};
