@@ -21,7 +21,6 @@ void Level1::OnAttach()
 		Registry::Get().EnrollEntity(collectible[i]);
 
 	Registry::Get().EnrollEntity(player, "Player");
-	Registry::Get().EnrollEntity(tranquilizer, "Tranquilizer");
 	Registry::Get().EnrollEntity(tranquilizerWave, "TranquilizerWave");
 	Registry::Get().EnrollEntity(camera, "Camera");
 
@@ -66,9 +65,6 @@ void Level1::OnAttach()
 
 	Registry::Get().AddComponent<Component::Camera>(camera);
 
-	Registry::Get().AddComponent<Component::SpriteRenderer>(tranquilizer);
-	Registry::Get().AddComponent<Component::CollisionBox>(tranquilizer);
-
 	Registry::Get().AddComponent<Component::SpriteRenderer>(tranquilizerWave);
 	Registry::Get().AddComponent<Component::CollisionBox>(tranquilizerWave);
 	Registry::Get().AddComponent<Component::Text>(tranquilizerWave);
@@ -78,9 +74,6 @@ void Level1::OnAttach()
 	Registry::Get().GetComponent<Component::Script>(player).script.push_back(new PlayerScript());
 
 	Registry::Get().GetComponent<Component::Transform>(player).Static = false;
-
-	Registry::Get().GetComponent<Component::Transform>(tranquilizer).Static = false;
-	Registry::Get().GetComponent<Component::CollisionBox>(tranquilizer).Trigger = true;
 
 	Registry::Get().GetComponent<Component::Transform>(tranquilizerWave).Static = false;
 	Registry::Get().GetComponent<Component::CollisionBox>(tranquilizerWave).Trigger = true;
@@ -192,25 +185,16 @@ void Level1::InitializeLevel(const std::string& levelPath1, const std::string& l
 
 	HandleEntities();
 
-	// Tranquilizer.
-	Component::Transform& tranquilizerTransform = Registry::Get().GetComponent<Component::Transform>(tranquilizer);
-	Component::SpriteRenderer& tranquilizerMaterial = Registry::Get().GetComponent<Component::SpriteRenderer>(tranquilizer);
+	// Tranquilizer wave.
+	Component::Transform& tranquilizerTransform = Registry::Get().GetComponent<Component::Transform>(tranquilizerWave);
 
 	tranquilizerTransform.scale.x = 30.0f;
 	tranquilizerTransform.scale.y = 30.0f;
 	tranquilizerTransform.position.x = 55.f * tranquilizerTransform.scale.x;
 	tranquilizerTransform.position.y = 5.f * tranquilizerTransform.scale.y;
 
-	// Tranquilizer wave.
-	Component::Transform& pTr = Registry::Get().GetComponent<Component::Transform>(player);
-	Component::Transform& trTr = Registry::Get().GetComponent<Component::Transform>(tranquilizerWave);
-
-	trTr.position.x = pTr.position.x + 50.f;
-	trTr.position.y = pTr.position.y;
-	trTr.scale = { 90.f, 30.f, 0.f };
-
-	Registry::Get().GetComponent<Component::CollisionBox>(tranquilizerWave).Enabled = false;
-	Registry::Get().GetComponent<Component::SpriteRenderer>(tranquilizerWave).Enabled = false;
+	Registry::Get().GetComponent<Component::CollisionBox>(tranquilizerWave).Enabled = true;
+	Registry::Get().GetComponent<Component::SpriteRenderer>(tranquilizerWave).Enabled = true;
 
 	// Player.
 	Component::Transform& playerTransform = Registry::Get().GetComponent<Component::Transform>(player);
@@ -281,7 +265,7 @@ void Level1::HandleEntityTiles()
 				float x = glm::floor((100 - m_LevelTiles[i][j]) % 10);
 				float y = glm::floor((100 - m_LevelTiles[i][j]) / 10);
 				Registry::Get().GetComponent<Component::SpriteRenderer>(floor[floorIndex]).coords = { 0.f, 0.f };
-				Registry::Get().GetComponent<Component::Shadow>(wall[wallIndex]).Enabled = true;
+				//Registry::Get().GetComponent<Component::Shadow>(wall[wallIndex]).Enabled = true;
 
 				wallIndex++;
 			}
@@ -327,19 +311,19 @@ void Level1::HandleEntities()
 				enemyMaterial.Enabled = true;
 				enemyMaterial.texture = "res/textures/enemy.png";
 
-				if (enemyIndex >= 0 && enemyIndex <= 6)
+				if (enemyIndex >= 0 && enemyIndex <= 11)
 				{
 					Registry::Get().GetComponent<MyComponent::GhostBehaviour>(enemy[enemyIndex]).territory = &territory[0];
 				}
-				else if (enemyIndex >= 7 && enemyIndex <= 10)
+				else if (enemyIndex >= 12 && enemyIndex <= 15)
 				{
 					Registry::Get().GetComponent<MyComponent::GhostBehaviour>(enemy[enemyIndex]).territory = &territory[1];
 				}
-				else if (enemyIndex == 11 || enemyIndex == 13)
+				else if (enemyIndex == 16 || enemyIndex == 18)
 				{
 					Registry::Get().GetComponent<MyComponent::GhostBehaviour>(enemy[enemyIndex]).territory = &territory[3];
 				}
-				else if (enemyIndex == 12)
+				else if (enemyIndex == 17)
 				{
 					Registry::Get().GetComponent<MyComponent::GhostBehaviour>(enemy[enemyIndex]).territory = &territory[2];
 				}
@@ -382,39 +366,24 @@ void Level1::HandleEntities()
 				if (territoryIndex == 0)
 				{
 					territoryTransform.scale = { SceneManager::Get().m_TileSize * 13.f, SceneManager::Get().m_TileSize * 13.f, 0.f };
-
-					territoryTransform.Enabled = true;
-					territoryCollisionBox.Enabled = true;
-					//territoryMaterial.Enabled = true;
-					territoryCollisionBox.Trigger = true;
 				}
 				else if (territoryIndex == 1)
 				{
-					territoryTransform.scale = { SceneManager::Get().m_TileSize * 20.f, SceneManager::Get().m_TileSize * 40.f, 0.f };
-
-					territoryTransform.Enabled = true;
-					territoryCollisionBox.Enabled = true;
-					//territoryMaterial.Enabled = true;
-					territoryCollisionBox.Trigger = true;
+					territoryTransform.scale = { SceneManager::Get().m_TileSize * 18.f, SceneManager::Get().m_TileSize * 40.f, 0.f };
 				}
 				else if (territoryIndex == 2)
 				{
 					territoryTransform.scale = { SceneManager::Get().m_TileSize * 21.f, SceneManager::Get().m_TileSize * 17.f, 0.f };
-
-					territoryTransform.Enabled = true;
-					territoryCollisionBox.Enabled = true;
-					//territoryMaterial.Enabled = true;
-					territoryCollisionBox.Trigger = true;
 				}
 				else if (territoryIndex == 3)
 				{
 					territoryTransform.scale = { SceneManager::Get().m_TileSize * 27.f, SceneManager::Get().m_TileSize * 5.f, 0.f };
-
-					territoryTransform.Enabled = true;
-					territoryCollisionBox.Enabled = true;
-					//territoryMaterial.Enabled = true;
-					territoryCollisionBox.Trigger = true;
 				}
+
+				territoryTransform.Enabled = true;
+				territoryCollisionBox.Enabled = true;
+				//territoryMaterial.Enabled = true;
+				territoryCollisionBox.Trigger = true;
 
 				territoryIndex++;
 			}

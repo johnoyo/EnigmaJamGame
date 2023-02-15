@@ -31,7 +31,18 @@ public:
 
 			if (tranquilizer.Enabled)
 			{
-				if (tranquilizer.owner != nullptr)
+				// Aqcuire tranquilizer wave gun upon collision.
+				if (tranquilizer.owner != nullptr && !tranquilizer.acquired)
+				{
+					if (Systems::Collision.CollisionBetween(*tranquilizer.owner, entt))
+					{
+						ENGINE_LOG("Player collided with tranquilizer gun!!!");
+
+						tranquilizer.acquired = true;
+					}
+				}
+
+				if (tranquilizer.owner != nullptr && tranquilizer.acquired)
 				{
 					Component::Text& text = HBL::Registry::Get().GetComponent<Component::Text>(entt);
 					Component::Transform& transform = HBL::Registry::Get().GetComponent<Component::Transform>(entt);
@@ -158,6 +169,12 @@ public:
 							text.color = { 1.0f, 0.8f, 0.5f, 1.f };
 							tranquilizer.overheat = false;
 						}
+					}
+
+					// Play tranquilizer wave sound if not overheated.
+					if (HBL::InputManager::GetKeyPress(GLFW_KEY_SPACE) && !tranquilizer.overheat)
+					{
+						SoundManager::Play("res/audio/bleep.mp3", false, false);
 					}
 				}
 			}

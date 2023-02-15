@@ -14,6 +14,7 @@ namespace MyComponent
 		bool Up = false;
 		bool Down = true;
 		HBL::IEntity* owner = nullptr;
+		bool acquired = false;
 		bool Enabled = true;
 	};
 

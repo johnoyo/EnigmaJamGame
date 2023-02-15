@@ -11,13 +11,13 @@ public:
 	~PlayerScript() {}
 
 	IEntity player;
-	IEntity tranquilizer;
+	IEntity tranquilizerWave;
 	IEntity camera;
 
 	virtual void OnCreate() override 
 	{
 		player = (Registry::Get().FindEntityWithTag("Player"));
-		tranquilizer = (Registry::Get().FindEntityWithTag("Tranquilizer"));
+		tranquilizerWave = (Registry::Get().FindEntityWithTag("TranquilizerWave"));
 		camera = (Registry::Get().FindEntityWithTag("Camera"));
 
 		//Component::SpriteRenderer& sprite = Registry::Get().GetComponent<Component::SpriteRenderer>(player);
@@ -83,8 +83,8 @@ public:
 		//if (InputManager::GetKeyRelease(GLFW_KEY_D))
 		//	Systems::Animation.ResetAnimation(animation_p, 0, 5);
 
-		if (InputManager::GetKeyPress(GLFW_KEY_SPACE))
-			SoundManager::Play("res/audio/bleep.mp3", false, false);
+		//if (InputManager::GetKeyPress(GLFW_KEY_SPACE))
+		//	SoundManager::Play("res/audio/bleep.mp3", false, false);
 
 		if (InputManager::GetKeyDown(GLFW_KEY_A)) {
 			transform_p.position.x -= 210.0f * dt;
@@ -105,11 +105,14 @@ public:
 		//if (InputManager::GetKeyRelease(GLFW_KEY_W))
 		//	Systems::Animation.ResetAnimation(animation_p, 1, 5);
 
-		if (Systems::Collision.CollisionBetween(player, tranquilizer))
+		/*if (Systems::Collision.CollisionBetween(player, tranquilizer))
 		{
 			ENGINE_LOG("Player collided with tranquilizer gun!!!");
+
+			Registry::Get().GetComponent<MyComponent::Tranquilizer>(tranquilizerWave).acquired = true;
+
 			Registry::Get().GetComponent<Component::CollisionBox>(tranquilizer).Enabled = false;
 			Registry::Get().GetComponent<Component::SpriteRenderer>(tranquilizer).Enabled = false;
-		}
+		}*/
 	}
 };

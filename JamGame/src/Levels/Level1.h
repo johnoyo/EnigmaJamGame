@@ -19,7 +19,6 @@ public:
 	void HandleEntities();
 
 private:
-	HBL::IEntity tranquilizer;
 	HBL::IEntity tranquilizerWave;
 	HBL::IEntity player;
 	HBL::IEntity camera;
