@@ -11,6 +11,7 @@
 #include "Systems\CollectibleSystem.h"
 #include "Systems\LavaSystem.h"
 #include "Systems\PlayerHandlerSystem.h"
+#include "Systems\DoorSystem.h"
 
 // User declared systems
 TranquilizerSystem tranquilizerSystem;
@@ -19,6 +20,7 @@ GhostStunnerSystem ghostStunnerSystem;
 CollectibleSystem collectibleSystem;
 LavaSystem lavaSystem;
 PlayerHandlerSystem playerHandlerSystem;
+DoorSystem doorSystem;
 
 #include "Levels\MainMenu.h"
 #include "Levels\Level1.h"
@@ -36,6 +38,7 @@ int main()
 	HBL::Registry::Get().RegisterSystem<CollectibleSystem>(&collectibleSystem);
 	HBL::Registry::Get().RegisterSystem<LavaSystem>(&lavaSystem);
 	HBL::Registry::Get().RegisterSystem<PlayerHandlerSystem>(&playerHandlerSystem);
+	HBL::Registry::Get().RegisterSystem<PlayerHandlerSystem>(&doorSystem);
 
 	HBL::Registry::Get().AddArray<MyComponent::Tranquilizer>();
 	HBL::Registry::Get().AddArray<MyComponent::GhostBehaviour>();
@@ -43,6 +46,7 @@ int main()
 	HBL::Registry::Get().AddArray<MyComponent::Collectible>();
 	HBL::Registry::Get().AddArray<MyComponent::Lava>();
 	HBL::Registry::Get().AddArray<MyComponent::PlayerHandler>();
+	HBL::Registry::Get().AddArray<MyComponent::Door>();
 
 	app->AddScene(mainMenu);
 	app->AddScene(level1);

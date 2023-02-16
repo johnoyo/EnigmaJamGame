@@ -81,7 +81,7 @@ public:
 				}
 
 				// Player health.
-				if (playerHandler.health <= 0.f)
+				if (playerHandler.fear >= 100.f)
 				{
 					// Play Gameover sound.
 

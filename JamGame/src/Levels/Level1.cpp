@@ -11,8 +11,13 @@ void Level1::OnAttach()
 	for (uint32_t i = 0; i < 8000; i++)
 		Registry::Get().EnrollEntity(floor[i]);
 
+	for (uint32_t i = 0; i < 3; i++)
+		Registry::Get().EnrollEntity(door[i]);
+
 	for (uint32_t i = 0; i < 20; i++)
 		Registry::Get().EnrollEntity(territory[i]);
+
+	Registry::Get().EnrollEntity(player, "Player");
 
 	for (uint32_t i = 0; i < 200; i++)
 		Registry::Get().EnrollEntity(enemy[i]);
@@ -23,9 +28,12 @@ void Level1::OnAttach()
 	for (uint32_t i = 0; i < 200; i++)
 		Registry::Get().EnrollEntity(collectible[i]);
 
-	Registry::Get().EnrollEntity(player, "Player");
 	Registry::Get().EnrollEntity(tranquilizerWave, "TranquilizerWave");
 	Registry::Get().EnrollEntity(camera, "Camera");
+
+	Registry::Get().EnrollEntity(key[0], "Key0");
+	Registry::Get().EnrollEntity(key[1], "Key1");
+	Registry::Get().EnrollEntity(key[2], "Key2");
 
 	// Add components.
 	for (uint32_t i = 0; i < 2000; i++)
@@ -33,6 +41,14 @@ void Level1::OnAttach()
 		Registry::Get().AddComponent<Component::CollisionBox>(wall[i]);
 		Registry::Get().AddComponent<Component::SpriteRenderer>(wall[i]);
 		Registry::Get().AddComponent<Component::Shadow>(wall[i]);
+	}
+
+	for (uint32_t i = 0; i < 3; i++)
+	{
+		Registry::Get().AddComponent<Component::Shadow>(door[i]);
+		Registry::Get().AddComponent<Component::CollisionBox>(door[i]);
+		Registry::Get().AddComponent<Component::SpriteRenderer>(door[i]);
+		Registry::Get().AddComponent<MyComponent::Door>(door[i]);
 	}
 
 	for (uint32_t i = 0; i < 8000; i++)
@@ -68,6 +84,12 @@ void Level1::OnAttach()
 		Registry::Get().AddComponent<MyComponent::Collectible>(collectible[i]);
 	}
 
+	for (uint32_t i = 0; i < 3; i++)
+	{
+		Registry::Get().AddComponent<Component::CollisionBox>(key[i]);
+		Registry::Get().AddComponent<Component::SpriteRenderer>(key[i]);
+	}
+
 	Registry::Get().AddComponent<Component::SpriteRenderer>(player);
 	Registry::Get().AddComponent<Component::CollisionBox>(player);
 	Registry::Get().AddComponent<Component::Animation>(player);
@@ -82,7 +104,7 @@ void Level1::OnAttach()
 	Registry::Get().AddComponent<MyComponent::Tranquilizer>(tranquilizerWave);
 
 	// Initialize components.
-	Registry::Get().GetComponent<Component::Text>(player).text = "100";
+	Registry::Get().GetComponent<Component::Text>(player).text = "FEAR: " + std::to_string((int)Registry::Get().GetComponent<MyComponent::PlayerHandler>(player).fear);
 	Registry::Get().GetComponent<Component::Text>(player).color = { 0.25f, 0.8f, 0.25f, 1.0f };
 	Registry::Get().GetComponent<Component::Text>(player).screenSpace = true;
 	Registry::Get().GetComponent<Component::Text>(player).sreenSpaceOffset = { 50.f, Systems::Window.GetHeight() - 50.f };
@@ -91,10 +113,10 @@ void Level1::OnAttach()
 	Registry::Get().GetComponent<Component::Transform>(tranquilizerWave).Static = false;
 	Registry::Get().GetComponent<Component::CollisionBox>(tranquilizerWave).Trigger = true;
 
-	Registry::Get().GetComponent<Component::Text>(tranquilizerWave).text = "100";
+	Registry::Get().GetComponent<Component::Text>(tranquilizerWave).text = "CHARGE: " + std::to_string((int)Registry::Get().GetComponent<MyComponent::Tranquilizer>(tranquilizerWave).remaining);
 	Registry::Get().GetComponent<Component::Text>(tranquilizerWave).color = { 1.0f, 0.8f, 0.5f, 1.0f};
 	Registry::Get().GetComponent<Component::Text>(tranquilizerWave).screenSpace = true;
-	Registry::Get().GetComponent<Component::Text>(tranquilizerWave).sreenSpaceOffset = { Systems::Window.GetWidth() - 125.f, Systems::Window.GetHeight() - 50.f };
+	Registry::Get().GetComponent<Component::Text>(tranquilizerWave).sreenSpaceOffset = { Systems::Window.GetWidth() - 425.f, Systems::Window.GetHeight() - 50.f };
 
 	Registry::Get().GetComponent<Component::Camera>(camera).projection = glm::ortho(
 		0.0f, Systems::Window.GetWidth(),
@@ -109,6 +131,16 @@ void Level1::OnAttach()
 		Registry::Get().GetComponent<Component::SpriteRenderer>(wall[i]).Enabled = false;
 		Registry::Get().GetComponent<Component::Shadow>(wall[i]).Enabled = false;
 		Registry::Get().GetComponent<Component::Shadow>(wall[i]).source = &player;
+	}
+
+	for (uint32_t i = 0; i < 3; i++)
+	{
+		Registry::Get().GetComponent<Component::Transform>(door[i]).Static = true;
+		Registry::Get().GetComponent<Component::Transform>(door[i]).Enabled = false;
+		Registry::Get().GetComponent<Component::CollisionBox>(door[i]).Enabled = false;
+		Registry::Get().GetComponent<Component::SpriteRenderer>(door[i]).Enabled = false;
+		Registry::Get().GetComponent<Component::Shadow>(door[i]).Enabled = false;
+		Registry::Get().GetComponent<Component::Shadow>(door[i]).source = &player;
 	}
 
 	for (uint32_t i = 0; i < 8000; i++)
@@ -152,6 +184,14 @@ void Level1::OnAttach()
 		Registry::Get().GetComponent<Component::SpriteRenderer>(collectible[i]).Enabled = false;
 		Registry::Get().GetComponent<MyComponent::Collectible>(collectible[i]).Enabled = false;
 		Registry::Get().GetComponent<Component::CollisionBox>(collectible[i]).Enabled = false;
+	}
+
+	for (uint32_t i = 0; i < 3; i++)
+	{
+		Registry::Get().GetComponent<Component::Transform>(key[i]).Static = true;
+		Registry::Get().GetComponent<Component::Transform>(key[i]).Enabled = false;
+		Registry::Get().GetComponent<Component::CollisionBox>(key[i]).Enabled = false;
+		Registry::Get().GetComponent<Component::SpriteRenderer>(key[i]).Enabled = false;
 	}
 
 	InitializeLevel("res/levels/testMap_Tile Layer 1.csv", "res/levels/testMap_Tile Layer 2.csv");
@@ -338,6 +378,8 @@ void Level1::HandleEntities()
 	int rows = SceneManager::Get().m_WorldSize.x;
 	int collumns = SceneManager::Get().m_WorldSize.y;
 
+	int keyIndex = 0;
+	int doorIndex = 0;
 	int enemyIndex = 0;
 	int territoryIndex = 0;
 	int collectibleIndex = 0;
@@ -433,7 +475,7 @@ void Level1::HandleEntities()
 				}
 				else if (territoryIndex == 1)
 				{
-					territoryTransform.scale = { SceneManager::Get().m_TileSize * 20.f, SceneManager::Get().m_TileSize * 14.f, 0.f };
+					territoryTransform.scale = { SceneManager::Get().m_TileSize * 20.f, SceneManager::Get().m_TileSize * 12.5f, 0.f };
 				}
 				else if (territoryIndex == 2)
 				{
@@ -450,10 +492,63 @@ void Level1::HandleEntities()
 
 				territoryTransform.Enabled = true;
 				territoryCollisionBox.Enabled = true;
-				//territoryMaterial.Enabled = true;
+				territoryMaterial.Enabled = true;
 				territoryCollisionBox.Trigger = true;
 
 				territoryIndex++;
+			}
+			// Door.
+			else if (m_EntityTiles[i][j] == 47)
+			{
+				Component::Transform& doorTransform = Registry::Get().GetComponent<Component::Transform>(door[doorIndex]);
+				Component::SpriteRenderer& doorMaterial = Registry::Get().GetComponent<Component::SpriteRenderer>(door[doorIndex]);
+				Component::CollisionBox& doorCollisionBox = Registry::Get().GetComponent<Component::CollisionBox>(door[doorIndex]);
+				Component::Shadow& doorShadow = Registry::Get().GetComponent<Component::Shadow>(door[doorIndex]);
+				Registry::Get().GetComponent<MyComponent::Door>(door[doorIndex]).Enabled = true;
+
+				doorTransform.position.x = j * SceneManager::Get().m_TileSize;
+				int f = glm::abs(i - ((int)m_EntityTiles.size() - 1));
+				doorTransform.position.y = f * SceneManager::Get().m_TileSize;
+
+				if (doorIndex == 0)
+				{
+					doorTransform.scale = { SceneManager::Get().m_TileSize * 3.f, SceneManager::Get().m_TileSize * 1.f, 0.f };
+				}
+				else if (doorIndex == 1)
+				{
+					doorTransform.scale = { SceneManager::Get().m_TileSize * 1.f, SceneManager::Get().m_TileSize * 3.f, 0.f };
+				}
+				else if (doorIndex == 2)
+				{
+					doorTransform.scale = { SceneManager::Get().m_TileSize * 7.f, SceneManager::Get().m_TileSize * 1.f, 0.f };
+				}
+
+				doorTransform.Enabled = true;
+				doorCollisionBox.Enabled = true;
+				doorMaterial.Enabled = true;
+				doorShadow.Enabled = true;
+
+				doorIndex++;
+			}
+			// Key.
+			else if (m_EntityTiles[i][j] == 33)
+			{
+				Component::Transform& keyTransform = Registry::Get().GetComponent<Component::Transform>(key[keyIndex]);
+				Component::SpriteRenderer& keyMaterial = Registry::Get().GetComponent<Component::SpriteRenderer>(key[keyIndex]);
+				Component::CollisionBox& keyCollisionBox = Registry::Get().GetComponent<Component::CollisionBox>(key[keyIndex]);
+
+				keyTransform.scale = { SceneManager::Get().m_TileSize, SceneManager::Get().m_TileSize, 0.f };
+				keyTransform.position.x = j * keyTransform.scale.x;
+				int f = glm::abs(i - ((int)m_EntityTiles.size() - 1));
+				keyTransform.position.y = f * keyTransform.scale.y;
+
+				keyTransform.Enabled = true;
+				keyCollisionBox.Enabled = true;
+				keyMaterial.Enabled = true;
+
+				keyMaterial.texture = "res/textures/brick_3.png";
+
+				keyIndex++;
 			}
 		}
 	}

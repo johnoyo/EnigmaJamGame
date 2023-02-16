@@ -23,7 +23,7 @@ public:
 
 	virtual void Run(float dt) override
 	{
-		Registry::Get().Group < Component::SpriteRenderer, Component::CollisionBox, MyComponent::Collectible > ().ForEach([&](IEntity& entt)
+		Registry::Get().Group<Component::SpriteRenderer, Component::CollisionBox, MyComponent::Collectible>().ForEach([&](IEntity& entt)
 		{
 			MyComponent::Collectible& collectible = Registry::Get().GetComponent<MyComponent::Collectible>(entt);
 			Component::CollisionBox& collision = Registry::Get().GetComponent<Component::CollisionBox>(entt);

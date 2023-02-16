@@ -21,8 +21,7 @@ public:
 private:
 	HBL::IEntity player;
 	HBL::IEntity camera;
-	HBL::IEntity key;
-	HBL::IEntity door;
+	HBL::IEntity popUpMenu;
 	HBL::IEntity tranquilizerWave;
 
 	HBL::IEntity wall[2000];
@@ -31,6 +30,8 @@ private:
 	HBL::IEntity enemy[200];
 	HBL::IEntity collectible[200];
 	HBL::IEntity territory[20];
+	HBL::IEntity door[3];
+	HBL::IEntity key[3];
 
 	std::vector<std::vector<int>> m_LevelTiles;
 	std::vector<std::vector<int>> m_EntityTiles;

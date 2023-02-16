@@ -54,7 +54,13 @@ namespace MyComponent
 
 	struct PlayerHandler
 	{
-		float health = 100.f;
+		float fear = 0.f;
+		bool Enabled = true;
+	};
+
+	struct Door
+	{
+		bool locked = true;
 		bool Enabled = true;
 	};
 }

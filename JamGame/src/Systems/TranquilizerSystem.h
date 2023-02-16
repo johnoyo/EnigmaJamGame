@@ -122,7 +122,7 @@ public:
 								tranquilizer.remaining = 0.f;
 						}
 
-						text.text = std::to_string((int)tranquilizer.remaining);
+						text.text = "CHARGE: " + std::to_string((int)tranquilizer.remaining);
 
 						if (tranquilizer.remaining > 10 && !tranquilizer.overheat)
 						{
@@ -150,7 +150,7 @@ public:
 								tranquilizer.remaining = 100.f;
 						}
 
-						text.text = std::to_string((int)tranquilizer.remaining);
+						text.text = "CHARGE: " + std::to_string((int)tranquilizer.remaining);
 
 						// Disable sprite and collision box.
 						collisionBox.Enabled = false;
