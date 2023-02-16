@@ -272,6 +272,7 @@ void Level1::InitializeLevel(const std::string& levelPath1, const std::string& l
 
 	Registry::Get().GetComponent<Component::CollisionBox>(tranquilizerWave).Enabled = true;
 	Registry::Get().GetComponent<Component::SpriteRenderer>(tranquilizerWave).Enabled = true;
+	Registry::Get().GetComponent<Component::SpriteRenderer>(tranquilizerWave).texture = "res/textures/TranquilizerGun.png";
 
 	// Player.
 	Component::Transform& playerTransform = Registry::Get().GetComponent<Component::Transform>(player);
@@ -394,6 +395,7 @@ void Level1::HandleEntities()
 				Component::Transform& enemyTransform = Registry::Get().GetComponent<Component::Transform>(enemy[enemyIndex]);
 				Component::SpriteRenderer& enemyMaterial = Registry::Get().GetComponent<Component::SpriteRenderer>(enemy[enemyIndex]);
 				Component::CollisionBox& enemyCollisionBox = Registry::Get().GetComponent<Component::CollisionBox>(enemy[enemyIndex]);
+				Component::Animation& enemyAnimation = Registry::Get().GetComponent<Component::Animation>(enemy[enemyIndex]);
 
 				enemyTransform.scale = { SceneManager::Get().m_TileSize, SceneManager::Get().m_TileSize, 0.f };
 				enemyTransform.position.x = j * enemyTransform.scale.x;
@@ -411,7 +413,33 @@ void Level1::HandleEntities()
 				enemyCollisionBox.Trigger = true;
 
 				enemyMaterial.Enabled = true;
-				enemyMaterial.texture = "res/textures/enemy.png";
+				enemyMaterial.texture = "res/textures/GhostSheet.png";
+				enemyMaterial.coords = { 0.f, 0.f };
+				enemyMaterial.spriteSize = { 30.f, 30.f };
+
+				enemyAnimation.animations.push_back({
+					"RegularAnim",
+					&enemyMaterial,
+					{ 0.0f, 1.0f },
+					0.0,
+					0.5,
+					1,
+					1,
+					true,
+					true
+				});
+
+				enemyAnimation.animations.push_back({
+					"StunnedAnim",
+					&enemyMaterial,
+					{ 0.0f, 0.0f },
+					0.0,
+					0.5,
+					1,
+					1,
+					true,
+					false
+				});
 
 				if (enemyIndex >= 0 && enemyIndex <= 29)
 				{
@@ -454,7 +482,7 @@ void Level1::HandleEntities()
 				Registry::Get().GetComponent<MyComponent::Collectible>(collectible[collectibleIndex]).Enabled = true;
 
 				collectibleCollisionBox.Trigger = true;
-				collectibleMaterial.texture = "res/textures/coinA.png";
+				collectibleMaterial.texture = "res/textures/Coin.png";
 
 				collectibleIndex++;
 			}
@@ -492,7 +520,7 @@ void Level1::HandleEntities()
 
 				territoryTransform.Enabled = true;
 				territoryCollisionBox.Enabled = true;
-				territoryMaterial.Enabled = true;
+				//territoryMaterial.Enabled = true;
 				territoryCollisionBox.Trigger = true;
 
 				territoryIndex++;
@@ -546,7 +574,7 @@ void Level1::HandleEntities()
 				keyCollisionBox.Enabled = true;
 				keyMaterial.Enabled = true;
 
-				keyMaterial.texture = "res/textures/brick_3.png";
+				keyMaterial.texture = "res/textures/Key.png";
 
 				keyIndex++;
 			}

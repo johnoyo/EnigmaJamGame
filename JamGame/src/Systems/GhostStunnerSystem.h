@@ -23,9 +23,10 @@ public:
 
 	virtual void Run(float dt) override
 	{
-		Registry::Get().Group<Component::Transform, MyComponent::GhostStunner>().ForEach([&](IEntity& entt)
+		Registry::Get().Group<Component::Transform, Component::Animation, MyComponent::GhostStunner>().ForEach([&](IEntity& entt)
 		{
 			Component::Transform& ghostTransform = Registry::Get().GetComponent<Component::Transform>(entt);
+			Component::Animation& ghostAnimation = Registry::Get().GetComponent<Component::Animation>(entt);
 			MyComponent::GhostStunner& ghostStunner = Registry::Get().GetComponent<MyComponent::GhostStunner>(entt);
 
 			if (ghostStunner.Enabled)
@@ -38,6 +39,8 @@ public:
    						ghostStunner.stunned = true;
 						ghostStunner.stunTime = Systems::Window.GetTime();
 
+						Systems::Animation.PlayAnimation(ghostAnimation, 1);
+
 						ENGINE_LOG("CollisionBetween ghost and tranquilizer.");
 					}
 
@@ -46,6 +49,7 @@ public:
 						if (Systems::Window.GetTime() - ghostStunner.stunTime >= ghostStunner.stunDuration)
 						{
 							ghostStunner.stunned = false;
+							Systems::Animation.PlayAnimation(ghostAnimation, 0);
 						}
 					}
 				}
