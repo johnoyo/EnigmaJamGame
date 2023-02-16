@@ -9,12 +9,16 @@
 #include "Systems\GhostBehaviourSystem.h"
 #include "Systems\GhostStunnerSystem.h"
 #include "Systems\CollectibleSystem.h"
+#include "Systems\LavaSystem.h"
+#include "Systems\PlayerHandlerSystem.h"
 
 // User declared systems
 TranquilizerSystem tranquilizerSystem;
 GhostBehaviourSystem ghostBehaviourSystem;
 GhostStunnerSystem ghostStunnerSystem;
 CollectibleSystem collectibleSystem;
+LavaSystem lavaSystem;
+PlayerHandlerSystem playerHandlerSystem;
 
 #include "Levels\MainMenu.h"
 #include "Levels\Level1.h"
@@ -26,15 +30,19 @@ int main()
 
 	HBL::Application *app = new HBL::Application(1920.0f, 1080.0f, "JamGame", false, false, false, 30.0f);
 
-	HBL::Registry::Get().RegisterSystem(&tranquilizerSystem);
-	HBL::Registry::Get().RegisterSystem(&ghostBehaviourSystem);
-	HBL::Registry::Get().RegisterSystem(&ghostStunnerSystem);
-	HBL::Registry::Get().RegisterSystem(&collectibleSystem);
+	HBL::Registry::Get().RegisterSystem<TranquilizerSystem>(&tranquilizerSystem);
+	HBL::Registry::Get().RegisterSystem<GhostBehaviourSystem>(&ghostBehaviourSystem);
+	HBL::Registry::Get().RegisterSystem<GhostStunnerSystem>(&ghostStunnerSystem);
+	HBL::Registry::Get().RegisterSystem<CollectibleSystem>(&collectibleSystem);
+	HBL::Registry::Get().RegisterSystem<LavaSystem>(&lavaSystem);
+	HBL::Registry::Get().RegisterSystem<PlayerHandlerSystem>(&playerHandlerSystem);
 
 	HBL::Registry::Get().AddArray<MyComponent::Tranquilizer>();
 	HBL::Registry::Get().AddArray<MyComponent::GhostBehaviour>();
 	HBL::Registry::Get().AddArray<MyComponent::GhostStunner>();
 	HBL::Registry::Get().AddArray<MyComponent::Collectible>();
+	HBL::Registry::Get().AddArray<MyComponent::Lava>();
+	HBL::Registry::Get().AddArray<MyComponent::PlayerHandler>();
 
 	app->AddScene(mainMenu);
 	app->AddScene(level1);

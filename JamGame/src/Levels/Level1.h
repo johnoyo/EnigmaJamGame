@@ -19,12 +19,15 @@ public:
 	void HandleEntities();
 
 private:
-	HBL::IEntity tranquilizerWave;
 	HBL::IEntity player;
 	HBL::IEntity camera;
+	HBL::IEntity key;
+	HBL::IEntity door;
+	HBL::IEntity tranquilizerWave;
 
-	HBL::IEntity wall[1000];
-	HBL::IEntity floor[12000];
+	HBL::IEntity wall[2000];
+	HBL::IEntity lava[500];
+	HBL::IEntity floor[8000];
 	HBL::IEntity enemy[200];
 	HBL::IEntity collectible[200];
 	HBL::IEntity territory[20];

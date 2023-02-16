@@ -55,5 +55,6 @@ public:
 
 	virtual void Clear() override
 	{
+		Registry::Get().ClearArray<MyComponent::GhostStunner>();
 	}
 };

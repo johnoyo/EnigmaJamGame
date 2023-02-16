@@ -24,7 +24,7 @@ void MainMenu::OnAttach()
 	playButtonText.position = { playButtonTransform.position.x - 55.f, playButtonTransform.position.y - 2.5f, 0.f };
 	playButtonText.scale = { 1.f, 1.f, 0.f };
 
-	Registry::Get().GetComponent<Component::Clickable>(m_PlayButton).OnClick = [&]() { SceneManager::Get().TriggerSceneChange(); };
+	Registry::Get().GetComponent<Component::Clickable>(m_PlayButton).OnClick = [&]() { SceneManager::Get().LoadNextScene(); };
 }
 
 void MainMenu::OnCreate()

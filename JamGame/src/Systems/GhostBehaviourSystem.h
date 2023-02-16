@@ -34,7 +34,9 @@ public:
 				if (ghostBehaviour.target != nullptr)
 				{
 					// Enable agro state and disable retreat.
-					if (Systems::Collision.CollisionBetween(*ghostBehaviour.target, *ghostBehaviour.territory))
+					bool inTerritory = Systems::Collision.CollisionBetween(*ghostBehaviour.target, *ghostBehaviour.territory);
+
+					if (inTerritory)
 					{
 						ghostBehaviour.agro = true;
 						ghostBehaviour.retreat = false;
@@ -50,7 +52,7 @@ public:
 
 						float hypotenuse = sqrt((xDistance * xDistance) + (yDistance * yDistance));
 
-						if (hypotenuse < ghostBehaviour.range)
+						if (hypotenuse < ghostBehaviour.range || hypotenuse > 60.f || inTerritory)
 						{
 							// Follow player
 							ghostTransform.position.x += dt * ghostBehaviour.speed * (xDistance / hypotenuse);
@@ -89,7 +91,12 @@ public:
 						// Play sound.
 
 						// Lose health.
+						Component::Text& text = Registry::Get().GetComponent<Component::Text>(*ghostBehaviour.target);
+						MyComponent::PlayerHandler& playerHandler = Registry::Get().GetComponent<MyComponent::PlayerHandler>(*ghostBehaviour.target);
 
+						playerHandler.health -= 15.f * dt;
+
+						text.text = std::to_string((int)playerHandler.health);
 					}
 				}
 			}
@@ -98,5 +105,6 @@ public:
 
 	virtual void Clear() override 
 	{ 
+		Registry::Get().ClearArray<MyComponent::GhostBehaviour>();
 	}
 };

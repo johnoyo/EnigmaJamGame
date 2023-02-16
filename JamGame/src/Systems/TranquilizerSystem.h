@@ -180,5 +180,8 @@ public:
 			}
 		}).Run();
 	}
-	virtual void Clear() override { }
+	virtual void Clear() override 
+	{
+		Registry::Get().ClearArray<MyComponent::Tranquilizer>();
+	}
 };

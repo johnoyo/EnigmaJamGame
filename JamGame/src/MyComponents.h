@@ -21,7 +21,7 @@ namespace MyComponent
 	struct GhostBehaviour
 	{
 		float speed = 150.f;
-		float range = 400.f;
+		float range = 450.f;
 		bool agro = false;
 		bool retreat = false;
 		glm::vec3 basePosition = { 0.f, 0.f, 0.f };
@@ -43,6 +43,18 @@ namespace MyComponent
 	{
 		uint32_t points = 10U;
 		HBL::IEntity* target = nullptr;
+		bool Enabled = true;
+	};
+
+	struct Lava
+	{
+		HBL::IEntity* target = nullptr;
+		bool Enabled = true;
+	};
+
+	struct PlayerHandler
+	{
+		float health = 100.f;
 		bool Enabled = true;
 	};
 }
