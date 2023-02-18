@@ -28,6 +28,7 @@ private:
 	HBL::IEntity lava[500];
 	HBL::IEntity floor[7000];
 	HBL::IEntity enemy[200];
+	HBL::IEntity movingEnemy[20];
 	HBL::IEntity collectible[200];
 	HBL::IEntity territory[20];
 	HBL::IEntity doorWay[20];

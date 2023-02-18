@@ -70,4 +70,11 @@ namespace MyComponent
 		uint32_t index = 0;
 		bool Enabled = true;
 	};
+
+	struct MovingGhostBehaviour
+	{
+		bool phaseA = false;
+		bool phaseB = false;
+		bool Enabled = true;
+	};
 }

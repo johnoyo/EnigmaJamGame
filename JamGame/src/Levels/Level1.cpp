@@ -25,6 +25,9 @@ void Level1::OnAttach()
 	for (uint32_t i = 0; i < 200; i++)
 		Registry::Get().EnrollEntity(enemy[i], "Ghost");
 
+	for (uint32_t i = 0; i < 20; i++)
+		Registry::Get().EnrollEntity(movingEnemy[i]);
+
 	for (uint32_t i = 0; i < 500; i++)
 		Registry::Get().EnrollEntity(lava[i]);
 
@@ -77,6 +80,14 @@ void Level1::OnAttach()
 		Registry::Get().AddComponent<Component::Animation>(enemy[i]);
 		Registry::Get().AddComponent<MyComponent::GhostBehaviour>(enemy[i]);
 		Registry::Get().AddComponent<MyComponent::GhostStunner>(enemy[i]);
+	}
+
+	for (uint32_t i = 0; i < 20; i++)
+	{
+		Registry::Get().AddComponent<Component::SpriteRenderer>(movingEnemy[i]);
+		Registry::Get().AddComponent<Component::CollisionBox>(movingEnemy[i]);
+		Registry::Get().AddComponent<Component::Animation>(movingEnemy[i]);
+		Registry::Get().AddComponent<MyComponent::MovingGhostBehaviour>(movingEnemy[i]);
 	}
 
 	for (uint32_t i = 0; i < 500; i++)
@@ -170,9 +181,17 @@ void Level1::OnAttach()
 
 	for (uint32_t i = 0; i < 20; i++)
 	{
-		Registry::Get().GetComponent<Component::Transform>(territory[i]).Static = true;
-		Registry::Get().GetComponent<Component::Transform>(territory[i]).Enabled = false;
-		Registry::Get().GetComponent<Component::SpriteRenderer>(territory[i]).Enabled = false;
+		Registry::Get().GetComponent<Component::Transform>(doorWay[i]).Static = true;
+		Registry::Get().GetComponent<Component::Transform>(doorWay[i]).Enabled = false;
+		Registry::Get().GetComponent<Component::SpriteRenderer>(doorWay[i]).Enabled = false;
+	}
+
+	for (uint32_t i = 0; i < 20; i++)
+	{
+		Registry::Get().GetComponent<Component::Transform>(movingEnemy[i]).Static = true;
+		Registry::Get().GetComponent<Component::Transform>(movingEnemy[i]).Enabled = false;
+		Registry::Get().GetComponent<Component::SpriteRenderer>(movingEnemy[i]).Enabled = false;
+		Registry::Get().GetComponent<MyComponent::MovingGhostBehaviour>(movingEnemy[i]).Enabled = false;
 	}
 
 	for (uint32_t i = 0; i < 200; i++)
@@ -422,6 +441,7 @@ void Level1::HandleEntities()
 	int keyIndex = 0;
 	int doorIndex = 0;
 	int enemyIndex = 0;
+	int movingEnemyIndex = 0;
 	int territoryIndex = 0;
 	int collectibleIndex = 0;
 
@@ -457,9 +477,9 @@ void Level1::HandleEntities()
 				enemyMaterial.coords = { 0.f, 0.f };
 				enemyMaterial.spriteSize = { 30.f, 30.f };
 
-				enemyAnimation.animations.push_back({ "RegularAnim", &enemyMaterial, { 0.0f, 1.0f }, 0.0, 0.5, 1, 1, true, true });
+				enemyAnimation.animations.push_back({ "RegularAnim", &enemyMaterial, { 0.0f, 2.0f }, 0.0, 0.5, 1, 1, true, true });
 
-				enemyAnimation.animations.push_back({ "StunnedAnim", &enemyMaterial, { 0.0f, 0.0f }, 0.0, 0.5, 1, 1, true, false });
+				enemyAnimation.animations.push_back({ "StunnedAnim", &enemyMaterial, { 0.0f, 1.0f }, 0.0, 0.5, 1, 1, true, false });
 
 				if (enemyIndex >= 0 && enemyIndex <= 39)
 				{
@@ -487,6 +507,36 @@ void Level1::HandleEntities()
 				}
 
 				enemyIndex++;
+			}
+			// Moving Enemies.
+			if (m_EntityTiles[i][j] == 34)
+			{
+				Component::Transform& enemyTransform = Registry::Get().GetComponent<Component::Transform>(movingEnemy[movingEnemyIndex]);
+				Component::SpriteRenderer& enemyMaterial = Registry::Get().GetComponent<Component::SpriteRenderer>(movingEnemy[movingEnemyIndex]);
+				Component::CollisionBox& enemyCollisionBox = Registry::Get().GetComponent<Component::CollisionBox>(movingEnemy[movingEnemyIndex]);
+				Component::Animation& enemyAnimation = Registry::Get().GetComponent<Component::Animation>(movingEnemy[movingEnemyIndex]);
+
+				enemyTransform.scale = { SceneManager::Get().m_TileSize, SceneManager::Get().m_TileSize, 0.f };
+				enemyTransform.position.x = j * enemyTransform.scale.x;
+				int f = glm::abs(i - ((int)m_EntityTiles.size() - 1));
+				enemyTransform.position.y = f * enemyTransform.scale.y;
+
+				enemyTransform.Static = false;
+				enemyTransform.Enabled = true;
+
+				Registry::Get().GetComponent<MyComponent::MovingGhostBehaviour>(movingEnemy[movingEnemyIndex]).Enabled = true;
+
+				enemyTransform.Static = false;
+				enemyCollisionBox.Trigger = true;
+
+				enemyMaterial.Enabled = true;
+				enemyMaterial.texture = "res/textures/GhostSheet.png";
+				enemyMaterial.coords = { 0.f, 2.f };
+				enemyMaterial.spriteSize = { 30.f, 30.f };
+
+				enemyAnimation.animations.push_back({ "RegularAnim", &enemyMaterial, { 0.0f, 0.0f }, 0.0, 0.5, 1, 1, true, true });
+
+				movingEnemyIndex++;
 			}
 			// Collectibles.
 			else if (m_EntityTiles[i][j] == 19)
