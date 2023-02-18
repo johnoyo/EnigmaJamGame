@@ -24,12 +24,13 @@ private:
 	HBL::IEntity popUpMenu;
 	HBL::IEntity tranquilizerWave;
 
-	HBL::IEntity wall[2000];
+	HBL::IEntity wall[1600];
 	HBL::IEntity lava[500];
-	HBL::IEntity floor[8000];
+	HBL::IEntity floor[7000];
 	HBL::IEntity enemy[200];
 	HBL::IEntity collectible[200];
 	HBL::IEntity territory[20];
+	HBL::IEntity doorWay[20];
 	HBL::IEntity door[3];
 	HBL::IEntity key[3];
 

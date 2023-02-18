@@ -12,8 +12,10 @@
 #include "Systems\LavaSystem.h"
 #include "Systems\PlayerHandlerSystem.h"
 #include "Systems\DoorSystem.h"
+#include "Systems\MenuSystem.h"
 
 // User declared systems
+MenuSystem menuSystem;
 TranquilizerSystem tranquilizerSystem;
 GhostBehaviourSystem ghostBehaviourSystem;
 GhostStunnerSystem ghostStunnerSystem;
@@ -32,6 +34,7 @@ int main()
 
 	HBL::Application *app = new HBL::Application(1920.0f, 1080.0f, "JamGame", false, false, false, 30.0f);
 
+	HBL::Registry::Get().RegisterSystem<MenuSystem>(&menuSystem);
 	HBL::Registry::Get().RegisterSystem<TranquilizerSystem>(&tranquilizerSystem);
 	HBL::Registry::Get().RegisterSystem<GhostBehaviourSystem>(&ghostBehaviourSystem);
 	HBL::Registry::Get().RegisterSystem<GhostStunnerSystem>(&ghostStunnerSystem);
@@ -40,6 +43,7 @@ int main()
 	HBL::Registry::Get().RegisterSystem<PlayerHandlerSystem>(&playerHandlerSystem);
 	HBL::Registry::Get().RegisterSystem<PlayerHandlerSystem>(&doorSystem);
 
+	HBL::Registry::Get().AddArray<MyComponent::Menu>();
 	HBL::Registry::Get().AddArray<MyComponent::Tranquilizer>();
 	HBL::Registry::Get().AddArray<MyComponent::GhostBehaviour>();
 	HBL::Registry::Get().AddArray<MyComponent::GhostStunner>();

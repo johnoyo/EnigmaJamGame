@@ -5,9 +5,13 @@ using namespace HBL;
 class LavaSystem final : public ISystem
 {
 public:
+	std::vector<IEntity> m_Ghosts;
+
 	virtual void Start() override
 	{
 		FUNCTION_PROFILE();
+
+		m_Ghosts = Registry::Get().FindEntitiesWithTag("Ghost");
 
 		IEntity& target = Registry::Get().FindEntityWithTag("Player");
 
@@ -36,16 +40,48 @@ public:
 					{
 						ENGINE_LOG("Gameover: CollisionBetween lava and player.");
 
-						// Play game over sound.
-						SoundManager::Play("res/audio/coin02.wav", false, false);
+						// Increase fear.
+						Component::Text& text = Registry::Get().GetComponent<Component::Text>(*lava.target);
+						MyComponent::PlayerHandler& playerHandler = Registry::Get().GetComponent<MyComponent::PlayerHandler>(*lava.target);
 
-						// Gameover.
+						playerHandler.fear += 20.f * dt;
 
+						text.text = "FEAR: " + std::to_string((int)playerHandler.fear);
+					}
+				}
+
+				for (IEntity& ghost : m_Ghosts)
+				{
+					Component::Transform& ghostTransform = Registry::Get().GetComponent<Component::Transform>(ghost);
+
+					if (ghostTransform.Enabled)
+					{
+						Component::CollisionBox& ghostCollisionBox = Registry::Get().GetComponent<Component::CollisionBox>(ghost);
+						Component::SpriteRenderer& ghostSpriteRenderer = Registry::Get().GetComponent<Component::SpriteRenderer>(ghost);
+
+						MyComponent::GhostStunner& ghostStunner = Registry::Get().GetComponent<MyComponent::GhostStunner>(ghost);
+						MyComponent::GhostBehaviour& ghostBehaviour = Registry::Get().GetComponent<MyComponent::GhostBehaviour>(ghost);
+
+						if (Systems::Collision.CollisionBetween(entt, ghost))
+						{
+							ENGINE_LOG("Ghost died: CollisionBetween lava and ghost.");
+
+							// Play sound.
+
+							// Dead.
+							ghostTransform.Enabled = false;
+							ghostCollisionBox.Enabled = false;
+							ghostSpriteRenderer.Enabled = false;
+							
+							ghostStunner.Enabled = false;
+							ghostBehaviour.Enabled = false;
+
+						}
 					}
 				}
 			}
 
-		}).Run();
+		}).Scedule();
 	}
 
 	virtual void Clear() override

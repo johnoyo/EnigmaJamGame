@@ -5,20 +5,14 @@ using namespace HBL;
 class GhostBehaviourSystem final : public ISystem
 {
 public:
+
+	IEntity target;
+
 	virtual void Start() override
 	{
 		FUNCTION_PROFILE();
 
-		IEntity& target = Registry::Get().FindEntityWithTag("Player");
-
-		Registry::Get().View<MyComponent::GhostBehaviour>().ForEach([&](MyComponent::GhostBehaviour& ghostBehaviour)
-		{
-			if (ghostBehaviour.Enabled)
-			{
-				if (target != Registry::InvalidEntity)
-					ghostBehaviour.target = &target;
-			}
-		}).Run();
+		target = Registry::Get().FindEntityWithTag("Player");
 	}
 
 	virtual void Run(float dt) override
@@ -31,10 +25,10 @@ public:
 
 			if (ghostBehaviour.Enabled)
 			{
-				if (ghostBehaviour.target != nullptr)
+				if (target != Registry::Get().InvalidEntity)
 				{
 					// Enable agro state and disable retreat.
-					bool inTerritory = Systems::Collision.CollisionBetween(*ghostBehaviour.target, *ghostBehaviour.territory);
+					bool inTerritory = Systems::Collision.CollisionBetween(target, *ghostBehaviour.territory);
 
 					if (inTerritory)
 					{
@@ -45,7 +39,7 @@ public:
 					// Move towards the player(Agro).
 					if (!ghostStaller.stunned && ghostBehaviour.agro && !ghostBehaviour.retreat)
 					{
-						Component::Transform& targetTransform = Registry::Get().GetComponent<Component::Transform>(*(ghostBehaviour.target));
+						Component::Transform& targetTransform = Registry::Get().GetComponent<Component::Transform>(target);
 
 						float xDistance = targetTransform.position.x - ghostTransform.position.x;
 						float yDistance = targetTransform.position.y - ghostTransform.position.y;
@@ -55,8 +49,11 @@ public:
 						if (hypotenuse < ghostBehaviour.range || inTerritory)
 						{
 							// Follow player
-							ghostTransform.position.x += dt * ghostBehaviour.speed * (xDistance / hypotenuse);
-							ghostTransform.position.y += dt * ghostBehaviour.speed * (yDistance / hypotenuse);
+							if (hypotenuse > ghostBehaviour.minRange)
+							{
+								ghostTransform.position.x += dt * ghostBehaviour.speed * (xDistance / hypotenuse);
+								ghostTransform.position.y += dt * ghostBehaviour.speed * (yDistance / hypotenuse);
+							}
 						}	
 						else
 						{
@@ -84,19 +81,25 @@ public:
 						}
 					}
 
-					if (Systems::Collision.CollisionBetween(entt, *ghostBehaviour.target))
+					if (Systems::Collision.CollisionBetween(entt, target))
 					{
 						ENGINE_LOG("CollisionBetween ghost and player.");
+
+						ghostBehaviour.attacking = true;
 
 						// Play sound.
 
 						// Lose health.
-						Component::Text& text = Registry::Get().GetComponent<Component::Text>(*ghostBehaviour.target);
-						MyComponent::PlayerHandler& playerHandler = Registry::Get().GetComponent<MyComponent::PlayerHandler>(*ghostBehaviour.target);
+						Component::Text& text = Registry::Get().GetComponent<Component::Text>(target);
+						MyComponent::PlayerHandler& playerHandler = Registry::Get().GetComponent<MyComponent::PlayerHandler>(target);
 
 						playerHandler.fear += 20.f * dt;
 
 						text.text = "FEAR: " + std::to_string((int)playerHandler.fear);
+					}
+					else
+					{
+						ghostBehaviour.attacking = false;
 					}
 				}
 			}

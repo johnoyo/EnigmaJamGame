@@ -22,10 +22,11 @@ namespace MyComponent
 	{
 		float speed = 150.f;
 		float range = 450.f;
+		float minRange = 15.f;
 		bool agro = false;
 		bool retreat = false;
+		bool attacking = false;
 		glm::vec3 basePosition = { 0.f, 0.f, 0.f };
-		HBL::IEntity* target = nullptr;
 		HBL::IEntity* territory = nullptr;
 		bool Enabled = true;
 	};
@@ -35,7 +36,6 @@ namespace MyComponent
 		bool stunned = false;
 		double stunTime = 0.0;
 		double stunDuration = 5.0;
-		HBL::IEntity* target = nullptr;
 		bool Enabled = true;
 	};
 
@@ -55,12 +55,19 @@ namespace MyComponent
 	struct PlayerHandler
 	{
 		float fear = 0.f;
+		bool hasGun = false;
 		bool Enabled = true;
 	};
 
 	struct Door
 	{
 		bool locked = true;
+		bool Enabled = true;
+	};
+
+	struct Menu
+	{
+		uint32_t index = 0;
 		bool Enabled = true;
 	};
 }

@@ -5,10 +5,10 @@ using namespace HBL;
 void Level1::OnAttach()
 {
 	// Enroll entities.
-	for (uint32_t i = 0; i < 2000; i++)
+	for (uint32_t i = 0; i < 1600; i++)
 		Registry::Get().EnrollEntity(wall[i]);
 
-	for (uint32_t i = 0; i < 8000; i++)
+	for (uint32_t i = 0; i < 7000; i++)
 		Registry::Get().EnrollEntity(floor[i]);
 
 	for (uint32_t i = 0; i < 3; i++)
@@ -17,10 +17,13 @@ void Level1::OnAttach()
 	for (uint32_t i = 0; i < 20; i++)
 		Registry::Get().EnrollEntity(territory[i]);
 
+	for (uint32_t i = 0; i < 20; i++)
+		Registry::Get().EnrollEntity(doorWay[i]);
+
 	Registry::Get().EnrollEntity(player, "Player");
 
 	for (uint32_t i = 0; i < 200; i++)
-		Registry::Get().EnrollEntity(enemy[i]);
+		Registry::Get().EnrollEntity(enemy[i], "Ghost");
 
 	for (uint32_t i = 0; i < 500; i++)
 		Registry::Get().EnrollEntity(lava[i]);
@@ -36,7 +39,7 @@ void Level1::OnAttach()
 	Registry::Get().EnrollEntity(key[2], "Key2");
 
 	// Add components.
-	for (uint32_t i = 0; i < 2000; i++)
+	for (uint32_t i = 0; i < 1600; i++)
 	{
 		Registry::Get().AddComponent<Component::CollisionBox>(wall[i]);
 		Registry::Get().AddComponent<Component::SpriteRenderer>(wall[i]);
@@ -51,7 +54,7 @@ void Level1::OnAttach()
 		Registry::Get().AddComponent<MyComponent::Door>(door[i]);
 	}
 
-	for (uint32_t i = 0; i < 8000; i++)
+	for (uint32_t i = 0; i < 7000; i++)
 	{
 		Registry::Get().AddComponent<Component::SpriteRenderer>(floor[i]);
 	}
@@ -62,10 +65,16 @@ void Level1::OnAttach()
 		Registry::Get().AddComponent<Component::CollisionBox>(territory[i]);
 	}
 
+	for (uint32_t i = 0; i < 20; i++)
+	{
+		Registry::Get().AddComponent<Component::SpriteRenderer>(doorWay[i]);
+	}
+
 	for (uint32_t i = 0; i < 200; i++)
 	{
 		Registry::Get().AddComponent<Component::SpriteRenderer>(enemy[i]);
 		Registry::Get().AddComponent<Component::CollisionBox>(enemy[i]);
+		Registry::Get().AddComponent<Component::Animation>(enemy[i]);
 		Registry::Get().AddComponent<MyComponent::GhostBehaviour>(enemy[i]);
 		Registry::Get().AddComponent<MyComponent::GhostStunner>(enemy[i]);
 	}
@@ -74,6 +83,7 @@ void Level1::OnAttach()
 	{
 		Registry::Get().AddComponent<Component::SpriteRenderer>(lava[i]);
 		Registry::Get().AddComponent<Component::CollisionBox>(lava[i]);
+		Registry::Get().AddComponent<Component::Animation>(lava[i]);
 		Registry::Get().AddComponent<MyComponent::Lava>(lava[i]);
 	}
 
@@ -101,13 +111,15 @@ void Level1::OnAttach()
 	Registry::Get().AddComponent<Component::SpriteRenderer>(tranquilizerWave);
 	Registry::Get().AddComponent<Component::CollisionBox>(tranquilizerWave);
 	Registry::Get().AddComponent<Component::Text>(tranquilizerWave);
+	Registry::Get().AddComponent<Component::Animation>(tranquilizerWave);
 	Registry::Get().AddComponent<MyComponent::Tranquilizer>(tranquilizerWave);
 
 	// Initialize components.
 	Registry::Get().GetComponent<Component::Text>(player).text = "FEAR: " + std::to_string((int)Registry::Get().GetComponent<MyComponent::PlayerHandler>(player).fear);
 	Registry::Get().GetComponent<Component::Text>(player).color = { 0.25f, 0.8f, 0.25f, 1.0f };
+	Registry::Get().GetComponent<Component::Text>(player).scale = { 0.75f, 0.75f, 0.f };
 	Registry::Get().GetComponent<Component::Text>(player).screenSpace = true;
-	Registry::Get().GetComponent<Component::Text>(player).sreenSpaceOffset = { 50.f, Systems::Window.GetHeight() - 50.f };
+	Registry::Get().GetComponent<Component::Text>(player).sreenSpaceOffset = { 250.f, Systems::Window.GetHeight() - 163.f };
 	Registry::Get().GetComponent<Component::Transform>(player).Static = false;
 
 	Registry::Get().GetComponent<Component::Transform>(tranquilizerWave).Static = false;
@@ -115,15 +127,13 @@ void Level1::OnAttach()
 
 	Registry::Get().GetComponent<Component::Text>(tranquilizerWave).text = "CHARGE: " + std::to_string((int)Registry::Get().GetComponent<MyComponent::Tranquilizer>(tranquilizerWave).remaining);
 	Registry::Get().GetComponent<Component::Text>(tranquilizerWave).color = { 1.0f, 0.8f, 0.5f, 1.0f};
+	Registry::Get().GetComponent<Component::Text>(tranquilizerWave).scale = { 0.75f, 0.75f, 0.f };
 	Registry::Get().GetComponent<Component::Text>(tranquilizerWave).screenSpace = true;
-	Registry::Get().GetComponent<Component::Text>(tranquilizerWave).sreenSpaceOffset = { Systems::Window.GetWidth() - 425.f, Systems::Window.GetHeight() - 50.f };
+	Registry::Get().GetComponent<Component::Text>(tranquilizerWave).sreenSpaceOffset = { Systems::Window.GetWidth() - 625.f, Systems::Window.GetHeight() - 163.f };
 
-	Registry::Get().GetComponent<Component::Camera>(camera).projection = glm::ortho(
-		0.0f, Systems::Window.GetWidth(),
-		0.0f, Systems::Window.GetHeight(),
-		-1.0f, 1.0f);
+	Registry::Get().GetComponent<Component::Camera>(camera).projection = glm::ortho( 200.0f, Systems::Window.GetWidth() - 200.f, 113.0f, Systems::Window.GetHeight() - 113.f, -1.0f, 1.0f);
 
-	for (uint32_t i = 0; i < 2000; i++)
+	for (uint32_t i = 0; i < 1600; i++)
 	{
 		Registry::Get().GetComponent<Component::Transform>(wall[i]).Static = true;
 		Registry::Get().GetComponent<Component::Transform>(wall[i]).Enabled = false;
@@ -143,7 +153,7 @@ void Level1::OnAttach()
 		Registry::Get().GetComponent<Component::Shadow>(door[i]).source = &player;
 	}
 
-	for (uint32_t i = 0; i < 8000; i++)
+	for (uint32_t i = 0; i < 7000; i++)
 	{
 		Registry::Get().GetComponent<Component::Transform>(floor[i]).Static = true;
 		Registry::Get().GetComponent<Component::Transform>(floor[i]).Enabled = false;
@@ -155,6 +165,13 @@ void Level1::OnAttach()
 		Registry::Get().GetComponent<Component::Transform>(territory[i]).Static = true;
 		Registry::Get().GetComponent<Component::Transform>(territory[i]).Enabled = false;
 		Registry::Get().GetComponent<Component::CollisionBox>(territory[i]).Enabled = false;
+		Registry::Get().GetComponent<Component::SpriteRenderer>(territory[i]).Enabled = false;
+	}
+
+	for (uint32_t i = 0; i < 20; i++)
+	{
+		Registry::Get().GetComponent<Component::Transform>(territory[i]).Static = true;
+		Registry::Get().GetComponent<Component::Transform>(territory[i]).Enabled = false;
 		Registry::Get().GetComponent<Component::SpriteRenderer>(territory[i]).Enabled = false;
 	}
 
@@ -174,6 +191,7 @@ void Level1::OnAttach()
 		Registry::Get().GetComponent<Component::Transform>(lava[i]).Enabled = false;
 		Registry::Get().GetComponent<Component::CollisionBox>(lava[i]).Enabled = false;
 		Registry::Get().GetComponent<Component::SpriteRenderer>(lava[i]).Enabled = false;
+		Registry::Get().GetComponent<Component::Animation>(lava[i]).Enabled = false;
 		Registry::Get().GetComponent<MyComponent::Lava>(lava[i]).Enabled = false;
 	}
 
@@ -270,6 +288,7 @@ void Level1::InitializeLevel(const std::string& levelPath1, const std::string& l
 	tranquilizerTransform.position.x = 55.f * tranquilizerTransform.scale.x;
 	tranquilizerTransform.position.y = 5.f * tranquilizerTransform.scale.y;
 
+	Registry::Get().GetComponent<Component::Animation>(tranquilizerWave).Enabled = false;
 	Registry::Get().GetComponent<Component::CollisionBox>(tranquilizerWave).Enabled = true;
 	Registry::Get().GetComponent<Component::SpriteRenderer>(tranquilizerWave).Enabled = true;
 	Registry::Get().GetComponent<Component::SpriteRenderer>(tranquilizerWave).texture = "res/textures/TranquilizerGun.png";
@@ -288,9 +307,12 @@ void Level1::InitializeLevel(const std::string& levelPath1, const std::string& l
 	Registry::Get().GetComponent<Component::CollisionBox>(player).Enabled = true;
 
 	playerMaterial.Enabled = true;
-	playerMaterial.texture = "res/textures/hero-1.png";
+	playerMaterial.texture = "res/textures/HeroSheet.png";
+	playerMaterial.spriteSize = { 30.f, 30.f };
+	playerMaterial.coords = { 0.f, 0.f };
 
 	Registry::Get().GetComponent<Component::Animation>(player).Enabled = true;
+	Registry::Get().GetComponent<MyComponent::PlayerHandler>(player).Enabled = true;
 }
 
 void Level1::HandleEntityTiles()
@@ -301,6 +323,7 @@ void Level1::HandleEntityTiles()
 	int wallIndex = 0;
 	int floorIndex = 0;
 	int lavaIndex = 0;
+	int doorWayIndex = 0;
 
 	for (int i = 0; i < m_LevelTiles.size(); i++)
 	{
@@ -323,9 +346,12 @@ void Level1::HandleEntityTiles()
 
 				sp.Enabled = true;
 				sp.color = { 1.f, 1.f, 1.f, 1.f };
-				sp.texture = "res/textures/Zelda-II-Parapa-Palace-Tileset-Enigma.png";
+				sp.texture = "res/textures/LavaSheet.png";
 				sp.spriteSize = { SceneManager::Get().m_TileSize, SceneManager::Get().m_TileSize };
-				sp.coords = { 2.f, 9.f };
+				sp.coords = { 0.f, 0.f };
+
+				Registry::Get().GetComponent<Component::Animation>(lava[lavaIndex]).Enabled = true;
+				Registry::Get().GetComponent<Component::Animation>(lava[lavaIndex]).animations.push_back({ "RegularAnim", &sp, { 0.0f, 0.0f }, 0.0, 0.5, 1, 1, true, true });
 
 				lavaIndex++;
 			}
@@ -341,11 +367,10 @@ void Level1::HandleEntityTiles()
 
 				Registry::Get().GetComponent<Component::SpriteRenderer>(floor[floorIndex]).Enabled = true;
 				Registry::Get().GetComponent<Component::SpriteRenderer>(floor[floorIndex]).color = { 1.f, 1.f, 1.f, 1.f };
+				//Registry::Get().GetComponent<Component::SpriteRenderer>(floor[floorIndex]).texture = "res/textures/FloorTile.png";
 				Registry::Get().GetComponent<Component::SpriteRenderer>(floor[floorIndex]).texture = "res/textures/Zelda-II-Parapa-Palace-Tileset-Enigma.png";
 				Registry::Get().GetComponent<Component::SpriteRenderer>(floor[floorIndex]).spriteSize = { SceneManager::Get().m_TileSize, SceneManager::Get().m_TileSize };
-				float x = glm::floor((100 - m_LevelTiles[i][j]) % 10);
-				float y = glm::floor((100 - m_LevelTiles[i][j]) / 10);
-				Registry::Get().GetComponent<Component::SpriteRenderer>(floor[floorIndex]).coords = { 5.f, 7.f };
+				Registry::Get().GetComponent<Component::SpriteRenderer>(floor[floorIndex]).coords = { 1.f, 6.f };
 
 				floorIndex++;
 			}
@@ -363,12 +388,27 @@ void Level1::HandleEntityTiles()
 				Registry::Get().GetComponent<Component::SpriteRenderer>(wall[wallIndex]).Enabled = true;
 				Registry::Get().GetComponent<Component::SpriteRenderer>(wall[wallIndex]).texture = "res/textures/Zelda-II-Parapa-Palace-Tileset-Enigma.png";
 				Registry::Get().GetComponent<Component::SpriteRenderer>(wall[wallIndex]).spriteSize = { SceneManager::Get().m_TileSize, SceneManager::Get().m_TileSize };
-				float x = glm::floor((100 - m_LevelTiles[i][j]) % 10);
-				float y = glm::floor((100 - m_LevelTiles[i][j]) / 10);
 				Registry::Get().GetComponent<Component::SpriteRenderer>(wall[wallIndex]).coords = { 0.f, 0.f };
 				Registry::Get().GetComponent<Component::Shadow>(wall[wallIndex]).Enabled = true;
 
 				wallIndex++;
+			}
+			else if (m_LevelTiles[i][j] == 46)
+			{
+				Component::Transform& tr = Registry::Get().GetComponent<Component::Transform>(doorWay[doorWayIndex]);
+				tr.scale = { SceneManager::Get().m_TileSize, SceneManager::Get().m_TileSize, 0.f };
+				tr.position.x = j * tr.scale.x;
+				int f = glm::abs(i - ((int)m_LevelTiles.size() - 1));
+				tr.position.y = f * tr.scale.y;
+
+				Registry::Get().GetComponent<Component::Transform>(doorWay[doorWayIndex]).Enabled = true;
+
+				Registry::Get().GetComponent<Component::SpriteRenderer>(doorWay[doorWayIndex]).Enabled = true;
+				Registry::Get().GetComponent<Component::SpriteRenderer>(doorWay[doorWayIndex]).texture = "res/textures/Zelda-II-Parapa-Palace-Tileset-Enigma.png";
+				Registry::Get().GetComponent<Component::SpriteRenderer>(doorWay[doorWayIndex]).spriteSize = { SceneManager::Get().m_TileSize, SceneManager::Get().m_TileSize };
+				Registry::Get().GetComponent<Component::SpriteRenderer>(doorWay[doorWayIndex]).coords = { 6.f, 5.f };
+
+				doorWayIndex++;
 			}
 		}
 	}
@@ -417,49 +457,33 @@ void Level1::HandleEntities()
 				enemyMaterial.coords = { 0.f, 0.f };
 				enemyMaterial.spriteSize = { 30.f, 30.f };
 
-				enemyAnimation.animations.push_back({
-					"RegularAnim",
-					&enemyMaterial,
-					{ 0.0f, 1.0f },
-					0.0,
-					0.5,
-					1,
-					1,
-					true,
-					true
-				});
+				enemyAnimation.animations.push_back({ "RegularAnim", &enemyMaterial, { 0.0f, 1.0f }, 0.0, 0.5, 1, 1, true, true });
 
-				enemyAnimation.animations.push_back({
-					"StunnedAnim",
-					&enemyMaterial,
-					{ 0.0f, 0.0f },
-					0.0,
-					0.5,
-					1,
-					1,
-					true,
-					false
-				});
+				enemyAnimation.animations.push_back({ "StunnedAnim", &enemyMaterial, { 0.0f, 0.0f }, 0.0, 0.5, 1, 1, true, false });
 
-				if (enemyIndex >= 0 && enemyIndex <= 29)
+				if (enemyIndex >= 0 && enemyIndex <= 39)
 				{
 					Registry::Get().GetComponent<MyComponent::GhostBehaviour>(enemy[enemyIndex]).territory = &territory[0];
 				}
-				else if (enemyIndex >= 30 && enemyIndex <= 44)
+				else if (enemyIndex >= 40 && enemyIndex <= 59)
 				{
 					Registry::Get().GetComponent<MyComponent::GhostBehaviour>(enemy[enemyIndex]).territory = &territory[1];
 				}
-				else if (enemyIndex >= 45 && enemyIndex <= 48)
+				else if (enemyIndex >= 60 && enemyIndex <= 74)
 				{
 					Registry::Get().GetComponent<MyComponent::GhostBehaviour>(enemy[enemyIndex]).territory = &territory[2];
 				}
-				else if (enemyIndex == 49 || enemyIndex == 51)
-				{
-					Registry::Get().GetComponent<MyComponent::GhostBehaviour>(enemy[enemyIndex]).territory = &territory[4];
-				}
-				else if (enemyIndex == 50)
+				else if (enemyIndex >= 75 && enemyIndex <= 78)
 				{
 					Registry::Get().GetComponent<MyComponent::GhostBehaviour>(enemy[enemyIndex]).territory = &territory[3];
+				}
+				else if (enemyIndex == 79 || enemyIndex == 81)
+				{
+					Registry::Get().GetComponent<MyComponent::GhostBehaviour>(enemy[enemyIndex]).territory = &territory[5];
+				}
+				else if (enemyIndex == 80)
+				{
+					Registry::Get().GetComponent<MyComponent::GhostBehaviour>(enemy[enemyIndex]).territory = &territory[4];
 				}
 
 				enemyIndex++;
@@ -499,21 +523,25 @@ void Level1::HandleEntities()
 
 				if (territoryIndex == 0)
 				{
-					territoryTransform.scale = { SceneManager::Get().m_TileSize * 8.f, SceneManager::Get().m_TileSize * 38.f, 0.f };
+					territoryTransform.scale = { SceneManager::Get().m_TileSize * 8.f, SceneManager::Get().m_TileSize * 40.f, 0.f };
 				}
-				else if (territoryIndex == 1)
+				if (territoryIndex == 1)
 				{
-					territoryTransform.scale = { SceneManager::Get().m_TileSize * 20.f, SceneManager::Get().m_TileSize * 12.5f, 0.f };
+					territoryTransform.scale = { SceneManager::Get().m_TileSize * 24.f, SceneManager::Get().m_TileSize * 9.f, 0.f };
 				}
 				else if (territoryIndex == 2)
 				{
-					territoryTransform.scale = { SceneManager::Get().m_TileSize * 18.f, SceneManager::Get().m_TileSize * 40.f, 0.f };
+					territoryTransform.scale = { SceneManager::Get().m_TileSize * 20.f, SceneManager::Get().m_TileSize * 12.5f, 0.f };
 				}
 				else if (territoryIndex == 3)
 				{
-					territoryTransform.scale = { SceneManager::Get().m_TileSize * 21.f, SceneManager::Get().m_TileSize * 17.f, 0.f };
+					territoryTransform.scale = { SceneManager::Get().m_TileSize * 18.f, SceneManager::Get().m_TileSize * 40.f, 0.f };
 				}
 				else if (territoryIndex == 4)
+				{
+					territoryTransform.scale = { SceneManager::Get().m_TileSize * 21.f, SceneManager::Get().m_TileSize * 17.f, 0.f };
+				}
+				else if (territoryIndex == 5)
 				{
 					territoryTransform.scale = { SceneManager::Get().m_TileSize * 27.f, SceneManager::Get().m_TileSize * 5.f, 0.f };
 				}

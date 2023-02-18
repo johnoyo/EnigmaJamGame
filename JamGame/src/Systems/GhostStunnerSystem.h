@@ -5,20 +5,13 @@ using namespace HBL;
 class GhostStunnerSystem final : public ISystem
 {
 public:
+	IEntity target;
+
 	virtual void Start() override
 	{
 		FUNCTION_PROFILE();
 
-		IEntity& target = Registry::Get().FindEntityWithTag("TranquilizerWave");
-
-		Registry::Get().View<MyComponent::GhostStunner>().ForEach([&](MyComponent::GhostStunner& ghostStunner)
-		{
-			if (ghostStunner.Enabled)
-			{
-				if (target != Registry::InvalidEntity)
-					ghostStunner.target = &target;
-			}
-		}).Run();
+		target = Registry::Get().FindEntityWithTag("TranquilizerWave");
 	}
 
 	virtual void Run(float dt) override
@@ -31,9 +24,9 @@ public:
 
 			if (ghostStunner.Enabled)
 			{
-				if (ghostStunner.target != nullptr)
+				if (target != Registry::Get().InvalidEntity)
 				{
-					if (Systems::Collision.CollisionBetween(entt, *ghostStunner.target) && !ghostStunner.stunned)
+					if (Systems::Collision.CollisionBetween(entt, target) && !ghostStunner.stunned)
 					{
 						// Play sound.
    						ghostStunner.stunned = true;

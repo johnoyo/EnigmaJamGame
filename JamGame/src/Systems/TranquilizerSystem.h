@@ -25,7 +25,7 @@ public:
 
 	virtual void Run(float dt) override
 	{
-		HBL::Registry::Get().Group<HBL::Component::Transform, HBL::Component::CollisionBox, Component::Text, Component::SpriteRenderer, MyComponent::Tranquilizer>().ForEach([&](HBL::IEntity& entt)
+		HBL::Registry::Get().Group<HBL::Component::Transform, HBL::Component::CollisionBox, Component::Text, Component::SpriteRenderer, Component::Animation, MyComponent::Tranquilizer>().ForEach([&](HBL::IEntity& entt)
 		{
 			MyComponent::Tranquilizer& tranquilizer = HBL::Registry::Get().GetComponent<MyComponent::Tranquilizer>(entt);
 
@@ -38,7 +38,18 @@ public:
 					{
 						ENGINE_LOG("Player collided with tranquilizer gun!!!");
 
+						Component::SpriteRenderer& spriteRenderer = HBL::Registry::Get().GetComponent<Component::SpriteRenderer>(entt);
+						spriteRenderer.texture = "res/textures/TranquilizerSheet.png";
+						spriteRenderer.coords = { 0.f, 0.f };
+						spriteRenderer.spriteSize = { 90.f, 30.f };
+
+						Component::Animation& animation = HBL::Registry::Get().GetComponent<Component::Animation>(entt);
+						animation.animations.push_back({ "WaveAnim", &spriteRenderer, { 0.0f, 0.0f }, 0.0, 0.1, 2, 2, true, true });
+
+						animation.Enabled = true;
+
 						tranquilizer.acquired = true;
+						Registry::Get().GetComponent<MyComponent::PlayerHandler>(*tranquilizer.owner).hasGun = true;
 					}
 				}
 
@@ -46,6 +57,7 @@ public:
 				{
 					Component::Text& text = HBL::Registry::Get().GetComponent<Component::Text>(entt);
 					Component::Transform& transform = HBL::Registry::Get().GetComponent<Component::Transform>(entt);
+					Component::Animation& animation = HBL::Registry::Get().GetComponent<Component::Animation>(entt);
 					Component::CollisionBox& collisionBox = HBL::Registry::Get().GetComponent<Component::CollisionBox>(entt);
 					Component::SpriteRenderer& spriteRenderer = HBL::Registry::Get().GetComponent<Component::SpriteRenderer>(entt);
 
@@ -72,6 +84,7 @@ public:
 						tranquilizer.Left = false;
 						tranquilizer.Up = true;
 						tranquilizer.Down = false;
+						
 					}
 					else if (HBL::InputManager::GetKeyDown(GLFW_KEY_S))
 					{
@@ -88,29 +101,26 @@ public:
 						{
 							transform.position.x = ownerTransform.position.x - 70.f;
 							transform.position.y = ownerTransform.position.y;
-							transform.scale.x = 90.f;
-							transform.scale.y = 30.f;
+							transform.scale = { 90.f, 30.f, 0.f };
 						}
 						else if (tranquilizer.Right)
 						{
 							transform.position.x = ownerTransform.position.x + 70.f;
 							transform.position.y = ownerTransform.position.y;
-							transform.scale.x = 90.f;
-							transform.scale.y = 30.f;
+							transform.scale = { 90.f, 30.f, 0.f };
+
 						}
 						else if (tranquilizer.Up)
 						{
 							transform.position.x = ownerTransform.position.x;
 							transform.position.y = ownerTransform.position.y + 70.f;
-							transform.scale.x = 30.f;
-							transform.scale.y = 90.f;
+							transform.scale = { 30.f, 90.f, 0.f };
 						}
 						else if (tranquilizer.Down)
 						{
 							transform.position.x = ownerTransform.position.x;
 							transform.position.y = ownerTransform.position.y - 70.f;
-							transform.scale.x = 30.f;
-							transform.scale.y = 90.f;
+							transform.scale = { 30.f, 90.f, 0.f };
 						}
 
 						// Discharge if not overheated.

@@ -14,6 +14,7 @@ public:
 
 private:
 	IEntity m_Camera;
-	IEntity m_PlayButton;
+	IEntity m_Cursor;
+	IEntity m_Buttons[3];
 };
 
