@@ -18,23 +18,24 @@ public:
 	{
 		Registry::Get().Group<Component::Transform, Component::Animation, MyComponent::GhostStunner>().ForEach([&](IEntity& entt)
 		{
-			Component::Transform& ghostTransform = Registry::Get().GetComponent<Component::Transform>(entt);
-			Component::Animation& ghostAnimation = Registry::Get().GetComponent<Component::Animation>(entt);
 			MyComponent::GhostStunner& ghostStunner = Registry::Get().GetComponent<MyComponent::GhostStunner>(entt);
 
 			if (ghostStunner.Enabled)
 			{
+				Component::Transform& ghostTransform = Registry::Get().GetComponent<Component::Transform>(entt);
+				Component::Animation& ghostAnimation = Registry::Get().GetComponent<Component::Animation>(entt);
+
 				if (target != Registry::Get().InvalidEntity)
 				{
 					if (Systems::Collision.CollisionBetween(entt, target) && !ghostStunner.stunned)
 					{
 						// Play sound.
+						SoundManager::Play("res/audio/freeze.wav", false, false);
+
    						ghostStunner.stunned = true;
 						ghostStunner.stunTime = Systems::Window.GetTime();
 
 						Systems::Animation.PlayAnimation(ghostAnimation, 1);
-
-						ENGINE_LOG("CollisionBetween ghost and tranquilizer.");
 					}
 
 					if (ghostStunner.stunned)

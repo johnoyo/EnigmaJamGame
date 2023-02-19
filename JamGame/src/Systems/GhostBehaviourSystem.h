@@ -19,12 +19,13 @@ public:
 	{
 		Registry::Get().Group<Component::Transform, MyComponent::GhostBehaviour, MyComponent::GhostStunner>().ForEach([&](IEntity& entt)
 		{
-			Component::Transform& ghostTransform = Registry::Get().GetComponent<Component::Transform>(entt);
 			MyComponent::GhostBehaviour& ghostBehaviour = Registry::Get().GetComponent<MyComponent::GhostBehaviour>(entt);
-			MyComponent::GhostStunner& ghostStaller = Registry::Get().GetComponent<MyComponent::GhostStunner>(entt);
 
 			if (ghostBehaviour.Enabled)
 			{
+				Component::Transform& ghostTransform = Registry::Get().GetComponent<Component::Transform>(entt);
+				MyComponent::GhostStunner& ghostStaller = Registry::Get().GetComponent<MyComponent::GhostStunner>(entt);
+
 				if (target != Registry::Get().InvalidEntity)
 				{
 					// Enable agro state and disable retreat.
@@ -83,11 +84,10 @@ public:
 
 					if (Systems::Collision.CollisionBetween(entt, target))
 					{
-						ENGINE_LOG("CollisionBetween ghost and player.");
-
 						ghostBehaviour.attacking = true;
 
 						// Play sound.
+						SoundManager::Play("res/audio/qubodup-GhostMoan01.mp3");
 
 						// Lose health.
 						Component::Text& text = Registry::Get().GetComponent<Component::Text>(target);
@@ -103,7 +103,7 @@ public:
 					}
 				}
 			}
-		}).Run();
+		}).Scedule();
 	}
 
 	virtual void Clear() override 

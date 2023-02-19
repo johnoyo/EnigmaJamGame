@@ -14,6 +14,9 @@
 #include "Systems\DoorSystem.h"
 #include "Systems\MenuSystem.h"
 #include "Systems\MovingEnemySystem.h"
+#include "Systems\BossBehaviourSystem.h"
+#include "Systems\YellowGhostBehaviourSystem.h"
+#include "Systems\PatrolGhostBehaviourSystem.h"
 
 // User declared systems
 MenuSystem menuSystem;
@@ -25,6 +28,9 @@ LavaSystem lavaSystem;
 PlayerHandlerSystem playerHandlerSystem;
 DoorSystem doorSystem;
 MovingEnemySystem movingEnemySystem;
+BossBehaviourSystem bossBehaviourSystem;
+YellowGhostBehaviourSystem yellowGhostBehaviourSystem;
+PatrolGhostBehaviourSystem patrolGhostBehaviourSystem;
 
 #include "Levels\MainMenu.h"
 #include "Levels\Level1.h"
@@ -34,7 +40,7 @@ int main()
 	MainMenu* mainMenu = new MainMenu;
 	Level1* level1 = new Level1;
 
-	HBL::Application *app = new HBL::Application(1920.0f, 1080.0f, "JamGame", false, false, false, 30.0f);
+	HBL::Application *app = new HBL::Application(1920.0f, 1080.0f, "Cursed Nighmare", false, true, false, 30.0f);
 
 	HBL::Registry::Get().RegisterSystem<MenuSystem>(&menuSystem);
 	HBL::Registry::Get().RegisterSystem<TranquilizerSystem>(&tranquilizerSystem);
@@ -45,6 +51,9 @@ int main()
 	HBL::Registry::Get().RegisterSystem<PlayerHandlerSystem>(&playerHandlerSystem);
 	HBL::Registry::Get().RegisterSystem<PlayerHandlerSystem>(&doorSystem);
 	HBL::Registry::Get().RegisterSystem<MovingEnemySystem>(&movingEnemySystem);
+	HBL::Registry::Get().RegisterSystem<BossBehaviourSystem>(&bossBehaviourSystem);
+	HBL::Registry::Get().RegisterSystem<YellowGhostBehaviourSystem>(&yellowGhostBehaviourSystem);
+	HBL::Registry::Get().RegisterSystem<PatrolGhostBehaviourSystem>(&patrolGhostBehaviourSystem);
 
 	HBL::Registry::Get().AddArray<MyComponent::Menu>();
 	HBL::Registry::Get().AddArray<MyComponent::Tranquilizer>();
@@ -55,6 +64,9 @@ int main()
 	HBL::Registry::Get().AddArray<MyComponent::PlayerHandler>();
 	HBL::Registry::Get().AddArray<MyComponent::Door>();
 	HBL::Registry::Get().AddArray<MyComponent::MovingGhostBehaviour>();
+	HBL::Registry::Get().AddArray<MyComponent::BossBehaviour>();
+	HBL::Registry::Get().AddArray<MyComponent::YellowGhostBehaviour>();
+	HBL::Registry::Get().AddArray<MyComponent::PatrolGhostBehaviour>();
 
 	app->AddScene(mainMenu);
 	app->AddScene(level1);

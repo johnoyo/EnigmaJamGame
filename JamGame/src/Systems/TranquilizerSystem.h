@@ -7,11 +7,13 @@ using namespace HBL;
 class TranquilizerSystem final : public HBL::ISystem
 {
 public:
+	IEntity m_Boss;
 	virtual void Start() override
 	{
 		FUNCTION_PROFILE();
 
 		IEntity& owner = Registry::Get().FindEntityWithTag("Player");
+		m_Boss = Registry::Get().FindEntityWithTag("Boss");
 
 		HBL::Registry::Get().View<MyComponent::Tranquilizer>().ForEach([&](MyComponent::Tranquilizer& tranquilizer)
 		{
@@ -102,6 +104,17 @@ public:
 							transform.position.x = ownerTransform.position.x - 70.f;
 							transform.position.y = ownerTransform.position.y;
 							transform.scale = { 90.f, 30.f, 0.f };
+
+							MyComponent::BossBehaviour& bossbehaviour = Registry::Get().GetComponent<MyComponent::BossBehaviour>(m_Boss);
+							if (glm::distance(transform.position, Registry::Get().GetComponent<Component::Transform>(m_Boss).position) < 90.f && !tranquilizer.overheat && !bossbehaviour.protectedPhase)
+							{
+								if (bossbehaviour.damaged = false)
+									SoundManager::Play("res/audio/growl_0.flac");
+
+								bossbehaviour.health -= 20 * dt;
+								bossbehaviour.damaged = true;
+								Systems::Animation.PlayAnimation(Registry::Get().GetComponent<Component::Animation>(m_Boss), 2);
+							}
 						}
 						else if (tranquilizer.Right)
 						{
@@ -109,18 +122,50 @@ public:
 							transform.position.y = ownerTransform.position.y;
 							transform.scale = { 90.f, 30.f, 0.f };
 
+							MyComponent::BossBehaviour& bossbehaviour = Registry::Get().GetComponent<MyComponent::BossBehaviour>(m_Boss);
+							if (glm::distance(transform.position, Registry::Get().GetComponent<Component::Transform>(m_Boss).position) < 90.f && !tranquilizer.overheat && !bossbehaviour.protectedPhase)
+							{
+								if (bossbehaviour.damaged = false)
+									SoundManager::Play("res/audio/growl_0.flac");
+
+								bossbehaviour.health -= 20 * dt;
+								bossbehaviour.damaged = true;
+								Systems::Animation.PlayAnimation(Registry::Get().GetComponent<Component::Animation>(m_Boss), 2);
+							}
 						}
 						else if (tranquilizer.Up)
 						{
 							transform.position.x = ownerTransform.position.x;
 							transform.position.y = ownerTransform.position.y + 70.f;
 							transform.scale = { 30.f, 90.f, 0.f };
+
+							MyComponent::BossBehaviour& bossbehaviour = Registry::Get().GetComponent<MyComponent::BossBehaviour>(m_Boss);
+							if (glm::distance(transform.position, Registry::Get().GetComponent<Component::Transform>(m_Boss).position) < 90.f && !tranquilizer.overheat && !bossbehaviour.protectedPhase)
+							{
+								if (bossbehaviour.damaged = false)
+									SoundManager::Play("res/audio/growl_0.flac");
+
+								bossbehaviour.health -= 20 * dt;
+								bossbehaviour.damaged = true;
+								Systems::Animation.PlayAnimation(Registry::Get().GetComponent<Component::Animation>(m_Boss), 2);
+							}
 						}
 						else if (tranquilizer.Down)
 						{
 							transform.position.x = ownerTransform.position.x;
 							transform.position.y = ownerTransform.position.y - 70.f;
 							transform.scale = { 30.f, 90.f, 0.f };
+
+							MyComponent::BossBehaviour& bossbehaviour = Registry::Get().GetComponent<MyComponent::BossBehaviour>(m_Boss);
+							if (glm::distance(transform.position, Registry::Get().GetComponent<Component::Transform>(m_Boss).position) < 90.f && !tranquilizer.overheat && !bossbehaviour.protectedPhase)
+							{
+								if (bossbehaviour.damaged = false)
+									SoundManager::Play("res/audio/growl_0.flac");
+
+								bossbehaviour.health -= 20 * dt;
+								bossbehaviour.damaged = true;
+								Systems::Animation.PlayAnimation(Registry::Get().GetComponent<Component::Animation>(m_Boss), 2);
+							}
 						}
 
 						// Discharge if not overheated.
@@ -151,6 +196,9 @@ public:
 					// Recharge when not pressing SPACE.
 					else
 					{
+						MyComponent::BossBehaviour& bossbehaviour = Registry::Get().GetComponent<MyComponent::BossBehaviour>(m_Boss);
+						bossbehaviour.damaged = false;
+
 						// Recharge if not overheated.
 						if (!tranquilizer.overheat)
 						{
@@ -184,7 +232,7 @@ public:
 					// Play tranquilizer wave sound if not overheated.
 					if (HBL::InputManager::GetKeyPress(GLFW_KEY_SPACE) && !tranquilizer.overheat)
 					{
-						SoundManager::Play("res/audio/bleep.mp3", false, false);
+						SoundManager::Play("res/audio/burst fire.mp3", false, false);
 					}
 				}
 			}

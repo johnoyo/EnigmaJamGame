@@ -18,11 +18,12 @@ public:
 	{
 		Registry::Get().Group<Component::Transform, MyComponent::MovingGhostBehaviour>().ForEach([&](IEntity& entt)
 		{
-			Component::Transform& transform = Registry::Get().GetComponent<Component::Transform>(entt);
 			MyComponent::MovingGhostBehaviour& movingGhostBehaviour = Registry::Get().GetComponent<MyComponent::MovingGhostBehaviour>(entt);
 
 			if (movingGhostBehaviour.Enabled)
 			{
+				Component::Transform& transform = Registry::Get().GetComponent<Component::Transform>(entt);
+
 				if (transform.position.y <= 2340.f && !movingGhostBehaviour.phaseA)
 				{
 					movingGhostBehaviour.phaseA = true;
@@ -47,7 +48,7 @@ public:
 					Component::Text& text = Registry::Get().GetComponent<Component::Text>(player);
 					MyComponent::PlayerHandler& playerHandler = Registry::Get().GetComponent<MyComponent::PlayerHandler>(player);
 
-					playerHandler.fear += 40.f * dt;
+					playerHandler.fear += 60.f * dt;
 
 					text.text = "FEAR: " + std::to_string((int)playerHandler.fear);
 				}
@@ -58,6 +59,6 @@ public:
 
 	virtual void Clear() override
 	{
-		Registry::Get().ClearArray<MyComponent::Menu>();
+		Registry::Get().ClearArray<MyComponent::MovingGhostBehaviour>();
 	}
 };

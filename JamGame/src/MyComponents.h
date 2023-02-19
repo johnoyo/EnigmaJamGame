@@ -42,7 +42,6 @@ namespace MyComponent
 	struct Collectible
 	{
 		uint32_t points = 10U;
-		HBL::IEntity* target = nullptr;
 		bool Enabled = true;
 	};
 
@@ -68,6 +67,7 @@ namespace MyComponent
 	struct Menu
 	{
 		uint32_t index = 0;
+		bool aboutScreen = false;
 		bool Enabled = true;
 	};
 
@@ -75,6 +75,35 @@ namespace MyComponent
 	{
 		bool phaseA = false;
 		bool phaseB = false;
+		bool Enabled = true;
+	};
+
+	struct PatrolGhostBehaviour
+	{
+		bool phaseA = false;
+		bool phaseB = false;
+		bool Enabled = true;
+	};
+
+	struct YellowGhostBehaviour
+	{
+		float speed = 200.f;
+		float minRange = 15.f;
+		bool Enabled = true;
+	};
+
+	struct BossBehaviour
+	{
+		double time = 0.0;
+		double duration = 5.0;
+		double attackTime = 0.0;
+		double attackFrequency = 1.0;
+		bool damaged = false;
+		bool agro = false;
+		bool protectedPhase = false;
+		HBL::IEntity* yellowGhosts = nullptr;
+		uint32_t index = 0;
+		float health = 100.f;
 		bool Enabled = true;
 	};
 }

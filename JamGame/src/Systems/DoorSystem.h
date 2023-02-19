@@ -33,14 +33,17 @@ public:
 		Registry::Get().Group<Component::SpriteRenderer, Component::Shadow, Component::CollisionBox, MyComponent::Door>().ForEach([&](IEntity& entt)
 		{
 			MyComponent::Door& door = Registry::Get().GetComponent<MyComponent::Door>(entt);
-			Component::Shadow& shadow = Registry::Get().GetComponent<Component::Shadow>(entt);
-			Component::SpriteRenderer& sprite = Registry::Get().GetComponent<Component::SpriteRenderer>(entt);
-			Component::CollisionBox& collisionBox = Registry::Get().GetComponent<Component::CollisionBox>(entt);
 
 			if (door.Enabled)
 			{
+				Component::Shadow& shadow = Registry::Get().GetComponent<Component::Shadow>(entt);
+				Component::SpriteRenderer& sprite = Registry::Get().GetComponent<Component::SpriteRenderer>(entt);
+				Component::CollisionBox& collisionBox = Registry::Get().GetComponent<Component::CollisionBox>(entt);
+
 				if (Systems::Collision.CollisionBetween(key[index], player))
 				{
+					SoundManager::Play("res/audio/magical_1.ogg");
+
 					Registry::Get().GetComponent<Component::SpriteRenderer>(key[index]).Enabled = false;
 					Registry::Get().GetComponent<Component::CollisionBox>(key[index]).Enabled = false;
 

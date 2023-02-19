@@ -6,6 +6,7 @@ class LavaSystem final : public ISystem
 {
 public:
 	std::vector<IEntity> m_Ghosts;
+	IEntity m_Target;
 
 	virtual void Start() override
 	{
@@ -13,16 +14,7 @@ public:
 
 		m_Ghosts = Registry::Get().FindEntitiesWithTag("Ghost");
 
-		IEntity& target = Registry::Get().FindEntityWithTag("Player");
-
-		Registry::Get().View<MyComponent::Lava>().ForEach([&](MyComponent::Lava& lava)
-		{
-			if (lava.Enabled)
-			{
-				if (target != Registry::InvalidEntity)
-					lava.target = &target;
-			}
-		}).Run();
+		m_Target = Registry::Get().FindEntityWithTag("Player");
 	}
 
 	virtual void Run(float dt) override
@@ -34,17 +26,17 @@ public:
 
 			if (lava.Enabled)
 			{
-				if (lava.target != nullptr)
+				if (m_Target != Registry::InvalidEntity)
 				{
-					if (Systems::Collision.CollisionBetween(entt, *lava.target))
+					if (Systems::Collision.CollisionBetween(entt, m_Target))
 					{
 						ENGINE_LOG("Gameover: CollisionBetween lava and player.");
 
 						// Increase fear.
-						Component::Text& text = Registry::Get().GetComponent<Component::Text>(*lava.target);
-						MyComponent::PlayerHandler& playerHandler = Registry::Get().GetComponent<MyComponent::PlayerHandler>(*lava.target);
+						Component::Text& text = Registry::Get().GetComponent<Component::Text>(m_Target);
+						MyComponent::PlayerHandler& playerHandler = Registry::Get().GetComponent<MyComponent::PlayerHandler>(m_Target);
 
-						playerHandler.fear += 20.f * dt;
+						playerHandler.fear += 30.f * dt;
 
 						text.text = "FEAR: " + std::to_string((int)playerHandler.fear);
 					}
@@ -56,26 +48,21 @@ public:
 
 					if (ghostTransform.Enabled)
 					{
-						Component::CollisionBox& ghostCollisionBox = Registry::Get().GetComponent<Component::CollisionBox>(ghost);
-						Component::SpriteRenderer& ghostSpriteRenderer = Registry::Get().GetComponent<Component::SpriteRenderer>(ghost);
-
-						MyComponent::GhostStunner& ghostStunner = Registry::Get().GetComponent<MyComponent::GhostStunner>(ghost);
-						MyComponent::GhostBehaviour& ghostBehaviour = Registry::Get().GetComponent<MyComponent::GhostBehaviour>(ghost);
-
 						if (Systems::Collision.CollisionBetween(entt, ghost))
 						{
-							ENGINE_LOG("Ghost died: CollisionBetween lava and ghost.");
-
-							// Play sound.
-
 							// Dead.
 							ghostTransform.Enabled = false;
-							ghostCollisionBox.Enabled = false;
-							ghostSpriteRenderer.Enabled = false;
+							Registry::Get().GetComponent<Component::CollisionBox>(ghost).Enabled = false;
+							Registry::Get().GetComponent<Component::SpriteRenderer>(ghost).Enabled = false;
 							
-							ghostStunner.Enabled = false;
-							ghostBehaviour.Enabled = false;
+							if (Registry::Get().HasComponent<MyComponent::GhostStunner>(ghost))
+								Registry::Get().GetComponent<MyComponent::GhostStunner>(ghost).Enabled = false;
 
+							if (Registry::Get().HasComponent<MyComponent::GhostBehaviour>(ghost))
+								Registry::Get().GetComponent<MyComponent::GhostBehaviour>(ghost).Enabled = false;
+
+							if (Registry::Get().HasComponent<MyComponent::YellowGhostBehaviour>(ghost))
+								Registry::Get().GetComponent<MyComponent::YellowGhostBehaviour>(ghost).Enabled = false;
 						}
 					}
 				}

@@ -23,12 +23,16 @@ private:
 	HBL::IEntity camera;
 	HBL::IEntity popUpMenu;
 	HBL::IEntity tranquilizerWave;
+	HBL::IEntity coinsCounter;
+	HBL::IEntity boss;
 
-	HBL::IEntity wall[1600];
+	HBL::IEntity wall[1700];
 	HBL::IEntity lava[500];
-	HBL::IEntity floor[7000];
+	HBL::IEntity floor[5500];
 	HBL::IEntity enemy[200];
+	HBL::IEntity patrolEnemy[6];
 	HBL::IEntity movingEnemy[20];
+	HBL::IEntity yellowEnemy[150];
 	HBL::IEntity collectible[200];
 	HBL::IEntity territory[20];
 	HBL::IEntity doorWay[20];

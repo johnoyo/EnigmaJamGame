@@ -15,6 +15,8 @@ public:
 private:
 	IEntity m_Camera;
 	IEntity m_Cursor;
+	IEntity m_Background;
+	IEntity m_AboutScreen;
 	IEntity m_Buttons[3];
 };
 
