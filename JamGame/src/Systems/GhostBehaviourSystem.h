@@ -82,7 +82,7 @@ public:
 						}
 					}
 
-					if (Systems::Collision.CollisionBetween(entt, target))
+					if (Systems::Collision.CollisionBetween(entt, target) && !ghostStaller.stunned)
 					{
 						ghostBehaviour.attacking = true;
 

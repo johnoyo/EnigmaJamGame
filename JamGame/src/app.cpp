@@ -40,20 +40,20 @@ int main()
 	MainMenu* mainMenu = new MainMenu;
 	Level1* level1 = new Level1;
 
-	HBL::Application *app = new HBL::Application(1920.0f, 1080.0f, "Cursed Nighmare", false, true, false, 30.0f);
+	HBL::Application *app = new HBL::Application(1920.0f, 1080.0f, "Cursed Nighmare", false, false, false, 30.0f);
 
-	HBL::Registry::Get().RegisterSystem<MenuSystem>(&menuSystem);
-	HBL::Registry::Get().RegisterSystem<TranquilizerSystem>(&tranquilizerSystem);
-	HBL::Registry::Get().RegisterSystem<GhostBehaviourSystem>(&ghostBehaviourSystem);
-	HBL::Registry::Get().RegisterSystem<GhostStunnerSystem>(&ghostStunnerSystem);
-	HBL::Registry::Get().RegisterSystem<CollectibleSystem>(&collectibleSystem);
-	HBL::Registry::Get().RegisterSystem<LavaSystem>(&lavaSystem);
-	HBL::Registry::Get().RegisterSystem<PlayerHandlerSystem>(&playerHandlerSystem);
-	HBL::Registry::Get().RegisterSystem<PlayerHandlerSystem>(&doorSystem);
-	HBL::Registry::Get().RegisterSystem<MovingEnemySystem>(&movingEnemySystem);
-	HBL::Registry::Get().RegisterSystem<BossBehaviourSystem>(&bossBehaviourSystem);
-	HBL::Registry::Get().RegisterSystem<YellowGhostBehaviourSystem>(&yellowGhostBehaviourSystem);
-	HBL::Registry::Get().RegisterSystem<PatrolGhostBehaviourSystem>(&patrolGhostBehaviourSystem);
+	HBL::Registry::Get().RegisterSystem(&menuSystem);
+	HBL::Registry::Get().RegisterSystem(&tranquilizerSystem);
+	HBL::Registry::Get().RegisterSystem(&ghostBehaviourSystem);
+	HBL::Registry::Get().RegisterSystem(&ghostStunnerSystem);
+	HBL::Registry::Get().RegisterSystem(&collectibleSystem);
+	HBL::Registry::Get().RegisterSystem(&lavaSystem);
+	HBL::Registry::Get().RegisterSystem(&playerHandlerSystem);
+	HBL::Registry::Get().RegisterSystem(&doorSystem);
+	HBL::Registry::Get().RegisterSystem(&movingEnemySystem);
+	HBL::Registry::Get().RegisterSystem(&bossBehaviourSystem);
+	HBL::Registry::Get().RegisterSystem(&yellowGhostBehaviourSystem);
+	HBL::Registry::Get().RegisterSystem(&patrolGhostBehaviourSystem);
 
 	HBL::Registry::Get().AddArray<MyComponent::Menu>();
 	HBL::Registry::Get().AddArray<MyComponent::Tranquilizer>();

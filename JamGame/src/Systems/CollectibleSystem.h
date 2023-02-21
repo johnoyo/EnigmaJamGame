@@ -13,6 +13,8 @@ public:
 	{
 		FUNCTION_PROFILE();
 
+		m_Collected = 0;
+
 		m_Player = Registry::Get().FindEntityWithTag("Player");
 		m_Counter = Registry::Get().FindEntityWithTag("CoinsCounter");
 	}
