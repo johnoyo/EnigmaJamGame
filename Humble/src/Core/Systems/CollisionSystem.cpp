@@ -63,10 +63,13 @@ namespace HBL
 					collisionBox.bl.x = tr.x - sc.x / 2.0f;
 
 					// Collision check on x-axis.
-					if (index != -1)
-						xCollision = CheckForSectorCollisions(entt, index, buffer, X_AXIS);
-					else
-						xCollision = CheckForCollisions(entt, buffer, X_AXIS);
+					if (!collisionBox.Trigger)
+					{
+						if (index != -1)
+							xCollision = CheckForSectorCollisions(entt, index, buffer, X_AXIS);
+						else
+							xCollision = CheckForCollisions(entt, buffer, X_AXIS);
+					}
 
 					// Update collision box on y-axis.
 					collisionBox.tl.y = tr.y + sc.y / 2.0f;
@@ -74,15 +77,18 @@ namespace HBL
 					collisionBox.br.y = tr.y - sc.y / 2.0f;
 					collisionBox.bl.y = tr.y - sc.y / 2.0f;
 
-					// Collision check on y-axis.
-					if (index != -1)
-						yCollision = CheckForSectorCollisions(entt, index, buffer, Y_AXIS);
-					else
-						yCollision = CheckForCollisions(entt, buffer, Y_AXIS);
-
-					if (Registry::Get().HasComponent<Component::Gravity>(entt))
+					if (!collisionBox.Trigger)
 					{
-						if (!xCollision && !yCollision)
+						// Collision check on y-axis.
+						if (index != -1)
+							yCollision = CheckForSectorCollisions(entt, index, buffer, Y_AXIS);
+						else
+							yCollision = CheckForCollisions(entt, buffer, Y_AXIS);
+					}
+
+					if (!xCollision && !yCollision)
+					{
+						if (Registry::Get().HasComponent<Component::Gravity>(entt))
 						{
 							Registry::Get().GetComponent<Component::Gravity>(entt).collides = false;
 							Registry::Get().GetComponent<Component::Gravity>(entt).isGrounded = false;
@@ -178,11 +184,18 @@ namespace HBL
 
 	bool CollisionSystem::CollisionBetween(IEntity& e0, IEntity& e1)
 	{
-		VertexBuffer& buffer = Renderer::Get().GetVertexBuffer(0);
-
-		bool collision = false;
 		Component::CollisionBox& collisionBox0 = Registry::Get().GetComponent<Component::CollisionBox>(e0);
 		Component::CollisionBox& collisionBox1 = Registry::Get().GetComponent<Component::CollisionBox>(e1);
+
+		return CollisionBetween(collisionBox0, collisionBox1);
+	}
+
+	bool CollisionSystem::CollisionBetween(Component::CollisionBox& collisionBox0, Component::CollisionBox& collisionBox1)
+	{
+		bool collision = false;
+
+		if (!collisionBox0.Enabled || !collisionBox1.Enabled)
+			return false;
 
 		collision = CheckCornerBRTL(collisionBox0.br, collisionBox1.tl, collisionBox1.br);
 		if (collision) return true;
@@ -453,7 +466,7 @@ namespace HBL
 			bool collision = false;
 			Component::CollisionBox& cb_i = component.second;
 
-			if (component.first != p.uuid && cb_i.Enabled)
+			if (component.first != p.uuid && cb_i.Enabled && !cb_i.Trigger)
 			{
 				Component::CollisionBox& cb_p = Registry::Get().GetComponent<Component::CollisionBox>(p);
 
@@ -464,6 +477,7 @@ namespace HBL
 						Registry::Get().GetComponent<Component::Gravity>(p).collides = true;
 						Registry::Get().GetComponent<Component::Gravity>(p).isGrounded = true;
 					}
+
 					return true;
 				}
 
@@ -474,6 +488,7 @@ namespace HBL
 						Registry::Get().GetComponent<Component::Gravity>(p).collides = true;
 						Registry::Get().GetComponent<Component::Gravity>(p).isGrounded = false;
 					}
+
 					return true;
 				}
 
@@ -484,6 +499,7 @@ namespace HBL
 						Registry::Get().GetComponent<Component::Gravity>(p).collides = true;
 						Registry::Get().GetComponent<Component::Gravity>(p).isGrounded = false;
 					}
+
 					return true;
 				}
 
@@ -494,6 +510,7 @@ namespace HBL
 						Registry::Get().GetComponent<Component::Gravity>(p).collides = true;
 						Registry::Get().GetComponent<Component::Gravity>(p).isGrounded = true;
 					}
+
 					return true;
 				}
 
@@ -504,6 +521,7 @@ namespace HBL
 						Registry::Get().GetComponent<Component::Gravity>(p).collides = true;
 						Registry::Get().GetComponent<Component::Gravity>(p).isGrounded = false;
 					}
+
 					return true;
 				}
 
@@ -514,6 +532,7 @@ namespace HBL
 						Registry::Get().GetComponent<Component::Gravity>(p).collides = true;
 						Registry::Get().GetComponent<Component::Gravity>(p).isGrounded = true;
 					}
+
 					return true;
 				}
 
@@ -524,6 +543,7 @@ namespace HBL
 						Registry::Get().GetComponent<Component::Gravity>(p).collides = true;
 						Registry::Get().GetComponent<Component::Gravity>(p).isGrounded = true;
 					}
+
 					return true;
 				}
 
@@ -534,6 +554,7 @@ namespace HBL
 						Registry::Get().GetComponent<Component::Gravity>(p).collides = true;
 						Registry::Get().GetComponent<Component::Gravity>(p).isGrounded = false;
 					}
+
 					return true;
 				}
 			}
@@ -551,7 +572,7 @@ namespace HBL
 			bool collision = false;
 			Component::CollisionBox& cb_i = Registry::Get().GetComponent<Component::CollisionBox>(entt);
 
-			if (p.uuid != entt.uuid && cb_i.Enabled) 
+			if (p.uuid != entt.uuid && cb_i.Enabled && !cb_i.Trigger)
 			{
 				Component::CollisionBox& cb_p = Registry::Get().GetComponent<Component::CollisionBox>(p);
 
@@ -566,6 +587,7 @@ namespace HBL
 							Registry::Get().GetComponent<Component::Gravity>(p).isGrounded = true;
 						}
 					}
+
 					return true;
 				}
 
@@ -580,6 +602,7 @@ namespace HBL
 							Registry::Get().GetComponent<Component::Gravity>(p).isGrounded = false;
 						}
 					}
+
 					return true;
 				}
 
@@ -594,6 +617,7 @@ namespace HBL
 							Registry::Get().GetComponent<Component::Gravity>(p).isGrounded = false;
 						}
 					}
+
 					return true;
 				}
 
@@ -608,6 +632,7 @@ namespace HBL
 							Registry::Get().GetComponent<Component::Gravity>(p).isGrounded = true;
 						}
 					}
+
 					return true;
 				}
 
@@ -622,6 +647,7 @@ namespace HBL
 							Registry::Get().GetComponent<Component::Gravity>(p).isGrounded = true;
 						}
 					}
+
 					return true;
 				}
 
@@ -636,6 +662,7 @@ namespace HBL
 							Registry::Get().GetComponent<Component::Gravity>(p).isGrounded = true;
 						}
 					}
+
 					return true;
 				}
 
@@ -650,6 +677,7 @@ namespace HBL
 							Registry::Get().GetComponent<Component::Gravity>(p).isGrounded = true;
 						}
 					}
+
 					return true;
 				}
 
@@ -664,6 +692,7 @@ namespace HBL
 							Registry::Get().GetComponent<Component::Gravity>(p).isGrounded = false;
 						}
 					}
+
 					return true;
 				}
 			}

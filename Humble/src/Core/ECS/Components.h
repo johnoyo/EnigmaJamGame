@@ -45,6 +45,8 @@ namespace HBL
 			glm::vec3 tl = { 0.0f, 0.0f, 0.0f };
 			glm::vec3 tr = { 0.0f, 0.0f, 0.0f };
 
+			bool Trigger = false;
+
 			bool Enabled = true;
 		};
 
