@@ -6,13 +6,13 @@ void HBL::SpriteRendererSystem::Start()
 
 	std::string shaderName = "";
 
-	if (SceneManager::Get().GetCurrentScene() == 0)
+	if (SceneManager::Get().GetCurrentScene() == 1)
 	{
-		shaderName = "res/shaders/Basic.shader";
+		shaderName = "res/shaders/BasicLighting.shader";
 	}
 	else
 	{
-		shaderName = "res/shaders/BasicLighting.shader";
+		shaderName = "res/shaders/Basic.shader";
 	}
 
 	Renderer::Get().AddBatch(shaderName, (Registry::Get().GetEntities().size() * 4), SceneManager::Get().GetMainCamera());

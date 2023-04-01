@@ -139,7 +139,9 @@ public:
 					bossBehaviour.Enabled = false;
 
 					// Win Screen.
-					SceneManager::Get().LoadScene(0);
+					SceneManager::Get().LoadNextScene();
+
+					Won = true;
 				}
 			}
 

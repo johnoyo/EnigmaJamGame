@@ -4,6 +4,8 @@
 // User defined components
 #include "MyComponents.h"
 
+bool Won = false;
+
 // User defined systems
 #include "Systems\TranquilizerSystem.h"
 #include "Systems\GhostBehaviourSystem.h"
@@ -18,6 +20,7 @@
 #include "Systems\YellowGhostBehaviourSystem.h"
 #include "Systems\PatrolGhostBehaviourSystem.h"
 #include "Systems\LightSystem.h"
+#include "Systems\EndScreenSystem.h"
 
 // User declared systems
 MenuSystem menuSystem;
@@ -33,14 +36,17 @@ BossBehaviourSystem bossBehaviourSystem;
 YellowGhostBehaviourSystem yellowGhostBehaviourSystem;
 PatrolGhostBehaviourSystem patrolGhostBehaviourSystem;
 LightSystem lightSystem;
+EndScreenSystem endScreenSystem;
 
 #include "Levels\MainMenu.h"
 #include "Levels\Level1.h"
+#include "Levels\EndScreen.h"
 
 int main() 
 {
 	MainMenu* mainMenu = new MainMenu;
 	Level1* level1 = new Level1;
+	EndScreen* endScreen = new EndScreen;
 
 	HBL::Application *app = new HBL::Application(1920.0f, 1080.0f, "Cursed Nighmare", false, false, false, 30.0f);
 
@@ -57,6 +63,7 @@ int main()
 	HBL::Registry::Get().RegisterSystem(&yellowGhostBehaviourSystem);
 	HBL::Registry::Get().RegisterSystem(&patrolGhostBehaviourSystem);
 	HBL::Registry::Get().RegisterSystem(&lightSystem);
+	HBL::Registry::Get().RegisterSystem(&endScreenSystem);
 
 	HBL::Registry::Get().AddArray<MyComponent::Menu>();
 	HBL::Registry::Get().AddArray<MyComponent::Tranquilizer>();
@@ -74,6 +81,7 @@ int main()
 
 	app->AddScene(mainMenu);
 	app->AddScene(level1);
+	app->AddScene(endScreen);
 
 	app->Start();
 

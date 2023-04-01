@@ -68,9 +68,10 @@ public:
 				if (playerHandler.fear >= 100.f)
 				{
 					// Play Gameover sound.
+					Won = false;
 
 					// Gameover.
-					SceneManager::Get().LoadScene(0);
+					SceneManager::Get().LoadNextScene();
 				}
 
 				// Player movement.
