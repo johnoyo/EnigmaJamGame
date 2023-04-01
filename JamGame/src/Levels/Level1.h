@@ -39,6 +39,8 @@ private:
 	HBL::IEntity door[3];
 	HBL::IEntity key[3];
 
+	HBL::IEntity light;
+
 	std::vector<std::vector<int>> m_LevelTiles;
 	std::vector<std::vector<int>> m_EntityTiles;
 };

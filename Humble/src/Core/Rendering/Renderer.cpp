@@ -2,7 +2,7 @@
 
 namespace HBL 
 {
-	void Renderer::AddBatch(const std::string& shaderPath, uint32_t vertexBufferSize, IEntity& camera)
+	uint32_t Renderer::AddBatch(const std::string& shaderPath, uint32_t vertexBufferSize, IEntity& camera)
 	{
 		glm::mat4& cameraVP = Registry::Get().GetComponent<Component::Camera>(camera).viewProjectionMatrix;
 
@@ -18,12 +18,21 @@ namespace HBL
 
 		UnBind();
 
-		size++;
+		return size++;
 	}
 
 	void Renderer::Render(IEntity& camera)
 	{
 		glm::mat4& cameraVP = Registry::Get().GetComponent<Component::Camera>(camera).viewProjectionMatrix;
+
+		IEntity light = Registry::Get().FindEntityWithTag("Light");
+
+		glm::vec3 lightPosition = {};
+
+		if (light != Registry::InvalidEntity)
+		{
+			lightPosition = Registry::Get().GetComponent<Component::Transform>(light).position;
+		}
 
 		BeginFrame();
 
@@ -32,6 +41,9 @@ namespace HBL
 			Bind();
 
 			UpdateCameraUniform(cameraVP);
+
+			if (currentIndex == 0)
+				UpdateLightUniform(lightPosition);
 
 			// Set dynamic vertex buffer
 			glBufferSubData(GL_ARRAY_BUFFER, 0, data->vbuffer.GetSize() * sizeof(Vertex_Array), data->vbuffer.GetBuffer());
@@ -222,7 +234,7 @@ namespace HBL
 	{
 		currentIndex = 0;
 
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClearColor(0.f, 0.f, 0.f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
 
@@ -300,6 +312,16 @@ namespace HBL
 			ENGINE_LOG("Uniform not found!!!");
 		}
 		glUniformMatrix4fv(location1, 1, GL_FALSE, glm::value_ptr(cameraVP));
+	}
+
+	void Renderer::UpdateLightUniform(glm::vec3& lightPosition)
+	{
+		auto location = glGetUniformLocation(rendererData[currentIndex]->shader, "u_LightPosition");
+		if (location == -1)
+		{
+			ENGINE_LOG("Uniform not found!!!");
+		}
+		glUniform3f(location, lightPosition.x, lightPosition.y, lightPosition.z);
 	}
 
 	ShaderProgramSource Renderer::ParseShader(const std::string& filepath)

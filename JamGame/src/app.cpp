@@ -17,6 +17,7 @@
 #include "Systems\BossBehaviourSystem.h"
 #include "Systems\YellowGhostBehaviourSystem.h"
 #include "Systems\PatrolGhostBehaviourSystem.h"
+#include "Systems\LightSystem.h"
 
 // User declared systems
 MenuSystem menuSystem;
@@ -31,6 +32,7 @@ MovingEnemySystem movingEnemySystem;
 BossBehaviourSystem bossBehaviourSystem;
 YellowGhostBehaviourSystem yellowGhostBehaviourSystem;
 PatrolGhostBehaviourSystem patrolGhostBehaviourSystem;
+LightSystem lightSystem;
 
 #include "Levels\MainMenu.h"
 #include "Levels\Level1.h"
@@ -54,6 +56,7 @@ int main()
 	HBL::Registry::Get().RegisterSystem(&bossBehaviourSystem);
 	HBL::Registry::Get().RegisterSystem(&yellowGhostBehaviourSystem);
 	HBL::Registry::Get().RegisterSystem(&patrolGhostBehaviourSystem);
+	HBL::Registry::Get().RegisterSystem(&lightSystem);
 
 	HBL::Registry::Get().AddArray<MyComponent::Menu>();
 	HBL::Registry::Get().AddArray<MyComponent::Tranquilizer>();
@@ -67,6 +70,7 @@ int main()
 	HBL::Registry::Get().AddArray<MyComponent::BossBehaviour>();
 	HBL::Registry::Get().AddArray<MyComponent::YellowGhostBehaviour>();
 	HBL::Registry::Get().AddArray<MyComponent::PatrolGhostBehaviour>();
+	HBL::Registry::Get().AddArray<MyComponent::Light>();
 
 	app->AddScene(mainMenu);
 	app->AddScene(level1);

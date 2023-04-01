@@ -26,6 +26,8 @@ namespace HBL
         virtual void Start() override;
         virtual void Run(float dt) override;
         virtual void Clear() override;
+    private:
+        uint32_t m_BatchIndex = 0;
     };
 
 }

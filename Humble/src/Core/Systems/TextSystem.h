@@ -39,5 +39,6 @@ namespace HBL
 		void SDF_Importer(const std::string& path);
 		std::vector<SDFData> sdfData;
 		float cursorPosition = 0.0f;
+		uint32_t m_BatchIndex = 0;
 	};
 }

@@ -51,6 +51,8 @@ void Level1::OnAttach()
 
 	Registry::Get().EnrollEntity(boss, "Boss");
 
+	Registry::Get().EnrollEntity(light, "Light");
+
 	// Add components.
 	for (uint32_t i = 0; i < 1700; i++)
 	{
@@ -158,6 +160,9 @@ void Level1::OnAttach()
 	Registry::Get().AddComponent<Component::CollisionBox>(boss);
 	Registry::Get().AddComponent<Component::Animation>(boss);
 	Registry::Get().AddComponent<MyComponent::BossBehaviour>(boss);
+
+	Registry::Get().AddComponent<Component::Transform>(light);
+	Registry::Get().AddComponent<MyComponent::Light>(light);
 
 	// Initialize components.
 	Registry::Get().GetComponent<Component::Text>(player).text = "FEAR: " + std::to_string((int)Registry::Get().GetComponent<MyComponent::PlayerHandler>(player).fear);

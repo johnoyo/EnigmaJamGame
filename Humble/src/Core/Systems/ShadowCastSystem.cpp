@@ -7,7 +7,10 @@ namespace HBL
 	{
 		FUNCTION_PROFILE();
 
-		VertexBuffer& buffer = Renderer::Get().GetVertexBuffer(0);
+		m_BatchIndex = Renderer::Get().AddBatch("res/shaders/Basic.shader", (Registry::Get().GetArray<Component::Shadow>().size() * 12), SceneManager::Get().GetMainCamera());
+
+		VertexBuffer& buffer = Renderer::Get().GetVertexBuffer(m_BatchIndex);
+		VertexBuffer& parentBuffer = Renderer::Get().GetVertexBuffer(0);
 
 		uint32_t offset = 0;
 
@@ -40,7 +43,7 @@ namespace HBL
 				// Find all shadow points
 				for (int j = 0; j < 4; j++)
 				{
-					glm::vec2& E = buffer.GetBuffer()[shadow.parentBufferIndex + j].position;
+					glm::vec2& E = parentBuffer.GetBuffer()[shadow.parentBufferIndex + j].position;
 
 					float rdx, rdy;
 					rdx = E.x - O.x;
@@ -55,23 +58,23 @@ namespace HBL
 				}
 
 				// Set shadow quad positions
-				Renderer::Get().RegisterQuad(0,
-												buffer.GetBuffer()[shadow.parentBufferIndex + 3].position,
+				Renderer::Get().RegisterQuad(m_BatchIndex,
+												parentBuffer.GetBuffer()[shadow.parentBufferIndex + 3].position,
 												shadow.points[3], shadow.points[0],
-												buffer.GetBuffer()[shadow.parentBufferIndex + 0].position,
+												parentBuffer.GetBuffer()[shadow.parentBufferIndex + 0].position,
 												shadow.color);
 
-				Renderer::Get().RegisterQuad(0,
-												buffer.GetBuffer()[shadow.parentBufferIndex + 0].position,
+				Renderer::Get().RegisterQuad(m_BatchIndex,
+												parentBuffer.GetBuffer()[shadow.parentBufferIndex + 0].position,
 												shadow.points[0], shadow.points[1],
-												buffer.GetBuffer()[shadow.parentBufferIndex + 1].position,
+												parentBuffer.GetBuffer()[shadow.parentBufferIndex + 1].position,
 												shadow.color);
 
-				Renderer::Get().RegisterQuad(0,
-												buffer.GetBuffer()[shadow.parentBufferIndex + 1].position,
+				Renderer::Get().RegisterQuad(m_BatchIndex,
+												parentBuffer.GetBuffer()[shadow.parentBufferIndex + 1].position,
 												shadow.points[1],
 												shadow.points[2],
-												buffer.GetBuffer()[shadow.parentBufferIndex + 2].position, shadow.color);
+												parentBuffer.GetBuffer()[shadow.parentBufferIndex + 2].position, shadow.color);
 			}
 		}).Run();
 	}
@@ -80,7 +83,8 @@ namespace HBL
 	{
 		//FUNCTION_PROFILE();
 
-		VertexBuffer& buffer = Renderer::Get().GetVertexBuffer(0);
+		VertexBuffer& buffer = Renderer::Get().GetVertexBuffer(m_BatchIndex);
+		VertexBuffer& parentBuffer = Renderer::Get().GetVertexBuffer(0);
 
 		Registry::Get().View<Component::Shadow>().ForEach([&](Component::Shadow& shadow)
 		{
@@ -91,7 +95,7 @@ namespace HBL
 				// Find all shadow points
 				for (int j = 0; j < 4; j++)
 				{
-					glm::vec2& E = buffer.GetBuffer()[shadow.parentBufferIndex + j].position;
+					glm::vec2& E = parentBuffer.GetBuffer()[shadow.parentBufferIndex + j].position;
 
 					float rdx, rdy;
 					rdx = E.x - O.x;
@@ -107,26 +111,26 @@ namespace HBL
 
 				// Update shadow quad positions and colors.
 				buffer.UpdatePositionOnQuad(shadow.bufferIndex,
-											buffer.GetBuffer()[shadow.parentBufferIndex + 3].position,
+											parentBuffer.GetBuffer()[shadow.parentBufferIndex + 3].position,
 											shadow.points[3],
 											shadow.points[0],
-											buffer.GetBuffer()[shadow.parentBufferIndex + 0].position);
+											parentBuffer.GetBuffer()[shadow.parentBufferIndex + 0].position);
 
 				buffer.UpdateMaterialOnQuad(shadow.bufferIndex, shadow.color, 0);
 
 				buffer.UpdatePositionOnQuad(shadow.bufferIndex + 4,
-											buffer.GetBuffer()[shadow.parentBufferIndex + 0].position,
+											parentBuffer.GetBuffer()[shadow.parentBufferIndex + 0].position,
 											shadow.points[0],
 											shadow.points[1],
-											buffer.GetBuffer()[shadow.parentBufferIndex + 1].position);
+											parentBuffer.GetBuffer()[shadow.parentBufferIndex + 1].position);
 
 				buffer.UpdateMaterialOnQuad(shadow.bufferIndex + 4, shadow.color, 0);
 
 				buffer.UpdatePositionOnQuad(shadow.bufferIndex + 8,
-											buffer.GetBuffer()[shadow.parentBufferIndex + 1].position,
+											parentBuffer.GetBuffer()[shadow.parentBufferIndex + 1].position,
 											shadow.points[1],
 											shadow.points[2],
-											buffer.GetBuffer()[shadow.parentBufferIndex + 2].position);
+											parentBuffer.GetBuffer()[shadow.parentBufferIndex + 2].position);
 
 				buffer.UpdateMaterialOnQuad(shadow.bufferIndex + 8, shadow.color, 0);
 			}

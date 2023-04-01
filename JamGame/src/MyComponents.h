@@ -106,4 +106,10 @@ namespace MyComponent
 		float health = 100.f;
 		bool Enabled = true;
 	};
+
+	struct Light
+	{
+		float intensity = 50.f;
+		bool Enabled = true;
+	};
 }

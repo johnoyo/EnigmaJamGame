@@ -4,7 +4,18 @@ void HBL::SpriteRendererSystem::Start()
 {
 	FUNCTION_PROFILE();
 
-	Renderer::Get().AddBatch("res/shaders/Basic.shader", (Registry::Get().GetEntities().size() * 4) + (Registry::Get().GetArray<Component::Shadow>().size() * 12), SceneManager::Get().GetMainCamera());
+	std::string shaderName = "";
+
+	if (SceneManager::Get().GetCurrentScene() == 0)
+	{
+		shaderName = "res/shaders/Basic.shader";
+	}
+	else
+	{
+		shaderName = "res/shaders/BasicLighting.shader";
+	}
+
+	Renderer::Get().AddBatch(shaderName, (Registry::Get().GetEntities().size() * 4), SceneManager::Get().GetMainCamera());
 	
 	TextureManager::Get().InitTransparentTexture();
 

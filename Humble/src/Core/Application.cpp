@@ -111,8 +111,8 @@ namespace HBL {
 		Registry::Get().RegisterSystem(&Systems::Camera);
 		Registry::Get().RegisterSystem(&Systems::Gravity);
 		Registry::Get().RegisterSystem(&Systems::Collision);
-		Registry::Get().RegisterSystem(&Systems::Text);
 		Registry::Get().RegisterSystem(&Systems::Shadow);
+		Registry::Get().RegisterSystem(&Systems::Text);
 		Registry::Get().RegisterSystem(&Systems::Clickable);
 	}
 
