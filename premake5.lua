@@ -8,6 +8,8 @@ workspace "EnigmaJamGame"
         "Release" 
     }
 
+    startproject "JamGame"
+
 -- Variable to hold output directory.
 outputdir = "%{cfg.buildcfg}-%{cfg.architecture}"
 

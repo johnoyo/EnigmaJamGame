@@ -42,7 +42,7 @@ void main()
 {
 	int id = int(v_tex_id);
 	float intensity = 2.0 / length(v_position.xy - u_LightPosition.xy);
-	float multiplier = 50.0;
+	float multiplier = 45.0;
 	vec4 finalColor = vec4(clamp(v_color.x * intensity * multiplier, 0.0, 1.0), clamp(v_color.y * intensity * multiplier, 0.0, 1.0), clamp(v_color.z * intensity * multiplier, 0.0, 1.0), v_color.w);
 	color = texture(u_textures[id], v_tex_coord) * finalColor;
 };
